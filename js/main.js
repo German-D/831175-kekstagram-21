@@ -1,20 +1,9 @@
 'use strict';
 
-var COMMENTS_QUANTITY = 4;
-
 var getRandomNumberInRange = function (min, max) {
-  let rand = min + Math.random() * (max + 1 - min);
+  var rand = min + Math.random() * (max + 1 - min);
   return Math.floor(rand);
 };
-
-var allMessages = [
-  `Всё отлично!`,
-  `В целом всё неплохо. Но не всё.`,
-  `Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.`,
-  `Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.`,
-  `Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.`,
-  `Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!`,
-];
 
 var allNames = [
   `Дима`,
@@ -26,50 +15,80 @@ var allNames = [
   `Магомед`,
 ];
 
+var allMessages = [
+  `Всё отлично!`,
+  `В целом всё неплохо. Но не всё.`,
+  `Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.`,
+  `Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.`,
+  `Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.`,
+  `Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!`,
+];
+
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Создаю массив из фотографий
-var allPhotos = [];
+var gatAllPhotos = function (photoQuantity) {
+  var allPhotos = [];
 
-for (var i = 1; i < 26; i++) {
+  for (var i = 1; i < photoQuantity; i++) {
 
-  // Определяю количетсво сообщений
-  var messagesQuantity = getRandomNumberInRange(1, 2);
+    // Скопипастил лучшее решение для перемешивания массива со stackoverflow
+    var shuffle = function (array) {
+      array = array.slice();
+      var m = array.length;
+      var temp;
+      var j;
 
-  // Пишу грязную функцию, потому что больше её не буду использовать.
-  // В функции, в зависимости от значения messagesQuantity возвращаю один или два комментария
-  var messeges = function () {
-    if (messagesQuantity === 2) {
-      return allMessages[getRandomNumberInRange(1, 6)] + ` ` + allMessages[getRandomNumberInRange(1, 6)];
-    }
-    return allMessages[getRandomNumberInRange(1, 6)];
-  };
+      // Check if there's still elements remaining
+      while (m) {
 
-  var allComments = [];
+        // Pick remaining element
+        j = Math.floor(Math.random() * m--);
 
-  // В зависимости от константы кол-ва комментариев — создаю массив с коментариями
-  for (var j = 0; j < COMMENTS_QUANTITY; j++) {
-    allComments.push({
-      avatar: `img/avatar-` + getRandomNumberInRange(1, 6) + `.svg`,
-      message: messeges(),
-      name: allNames[getRandomNumberInRange(1, 7)]
+        // Swap it with the current element
+        temp = array[m];
+        array[m] = array[j];
+        array[j] = temp;
+      }
+
+      return array;
+    };
+    var messages = function (messagesArray) {
+      return shuffle(messagesArray).slice(0, 2).join(` `);
+    };
+
+
+    var getAllComments = function (commentsQuantity) {
+
+      var allComments = [];
+
+      // В зависимости от константы кол-ва комментариев — создаю массив с коментариями
+      for (var j = 0; j < commentsQuantity; j++) {
+        allComments.push({
+          avatar: `img/avatar-` + getRandomNumberInRange(1, 6) + `.svg`,
+          message: messages(allMessages),
+          name: allNames[getRandomNumberInRange(1, 7)]
+        });
+      }
+      return allComments;
+    };
+
+    allPhotos.push({
+      url: `photos/` + i + `.jpg`,
+      description: `Описание фотографии`,
+      likes: getRandomNumberInRange(1, 25),
+      comments: getAllComments(4),
     });
   }
+  return allPhotos;
+};
 
-  allPhotos.push({
-    url: `photos/` + i + `.jpg`,
-    description: `Описание фотографии`,
-    likes: getRandomNumberInRange(1, 25),
-    comments: allComments,
-  });
-}
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Отрисовка фотографий
-var similarPhotoElement = document.querySelector(`.pictures`);
 
 var renderPhoto = function (photo) {
-  let pictureTemplate = document.querySelector(`#picture`)
+  var pictureTemplate = document.querySelector(`#picture`)
     .content
     .querySelector(`.picture`);
 
@@ -86,14 +105,15 @@ var renderPhoto = function (photo) {
 };
 
 var renderAllPhotos = function (photos) {
-
+  var similarPhotoElement = document.querySelector(`.pictures`);
   var fragment = document.createDocumentFragment();
-  for (var k = 0; k < photos.length; k++) {
-    var newPhoto = renderPhoto(photos[k]);
+
+  photos.forEach(function (item, i) {
+    var newPhoto = renderPhoto(photos[i]);
     fragment.appendChild(newPhoto);
-  }
+  });
 
   similarPhotoElement.appendChild(fragment);
 };
 
-renderAllPhotos(allPhotos);
+renderAllPhotos(gatAllPhotos(26));
