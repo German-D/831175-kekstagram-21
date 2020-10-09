@@ -1,9 +1,20 @@
 'use strict';
 
-var getRandomNumberInRange = function (min, max) {
-  var rand = min + Math.random() * (max + 1 - min);
-  return Math.floor(rand);
-};
+var AVATAR_RANDOM_START = 1;
+var AVATAR_RANDOM_FINISH = 6;
+
+var NAME_RANDOM_START = 0;
+var NAME_RANDOM_FINISH = 6;
+
+var MESSAGE_RANDOM_START = 1;
+var MESSAGE_RANDOM_FINISH = 2;
+
+var LIKES_RANDOM_START = 15;
+var LIKES_RANDOM_FINISH = 200;
+
+var COMMENTS_RANDOM_QUANTITY = 4;
+
+var MAIN_PHOTOS_QUANTITY = 25;
 
 var allNames = [
   `Дима`,
@@ -24,60 +35,65 @@ var allMessages = [
   `Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!`,
 ];
 
+var getRandomNumberInRange = function (min, max) {
+  var rand = min + Math.random() * (max + 1 - min);
+  return Math.floor(rand);
+};
+
+// Скопипастил лучшее решение для перемешивания массива со stackoverflow
+var shuffle = function (array) {
+  var list = array.slice();
+  var m = list.length;
+  var temp;
+  var j;
+
+  // Check if there's still elements remaining
+  while (m) {
+
+    // Pick remaining element
+    j = Math.floor(Math.random() * m--);
+
+    // Swap it with the current element
+    temp = list[m];
+    list[m] = list[j];
+    list[j] = temp;
+  }
+
+  return list;
+};
+
+/* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
+var getAllComments = function (commentsQuantity) {
+  var allComments = [];
+
+  // В зависимости от константы кол-ва комментариев — создаю массив с коментариями
+  for (var j = 0; j < commentsQuantity; j++) {
+    allComments.push({
+      avatar: `img/avatar-` + getRandomNumberInRange(AVATAR_RANDOM_START, AVATAR_RANDOM_FINISH) + `.svg`,
+      message: getMessages(allMessages),
+      name: allNames[getRandomNumberInRange(NAME_RANDOM_START, NAME_RANDOM_FINISH)]
+    });
+  }
+  return allComments;
+};
+
+/* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
+var getMessages = function (messagesArray) {
+  var messagesQuantity = getRandomNumberInRange(MESSAGE_RANDOM_START, MESSAGE_RANDOM_FINISH);
+  return shuffle(messagesArray).slice(0, messagesQuantity).join(` `);
+};
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Создаю массив из фотографий
-var gatAllPhotos = function (photoQuantity) {
+var getAllPhotos = function (photoQuantity) {
   var allPhotos = [];
 
-  for (var i = 1; i < photoQuantity; i++) {
-
-    // Скопипастил лучшее решение для перемешивания массива со stackoverflow
-    var shuffle = function (array) {
-      array = array.slice();
-      var m = array.length;
-      var temp;
-      var j;
-
-      // Check if there's still elements remaining
-      while (m) {
-
-        // Pick remaining element
-        j = Math.floor(Math.random() * m--);
-
-        // Swap it with the current element
-        temp = array[m];
-        array[m] = array[j];
-        array[j] = temp;
-      }
-
-      return array;
-    };
-    var messages = function (messagesArray) {
-      return shuffle(messagesArray).slice(0, 2).join(` `);
-    };
-
-
-    var getAllComments = function (commentsQuantity) {
-
-      var allComments = [];
-
-      // В зависимости от константы кол-ва комментариев — создаю массив с коментариями
-      for (var j = 0; j < commentsQuantity; j++) {
-        allComments.push({
-          avatar: `img/avatar-` + getRandomNumberInRange(1, 6) + `.svg`,
-          message: messages(allMessages),
-          name: allNames[getRandomNumberInRange(1, 7)]
-        });
-      }
-      return allComments;
-    };
-
+  for (var i = 1; i <= photoQuantity; i++) {
     allPhotos.push({
-      url: `photos/` + i + `.jpg`,
+      url: `photos/${i}.jpg`,
       description: `Описание фотографии`,
-      likes: getRandomNumberInRange(1, 25),
-      comments: getAllComments(4),
+      likes: getRandomNumberInRange(LIKES_RANDOM_START, LIKES_RANDOM_FINISH),
+      comments: getAllComments(COMMENTS_RANDOM_QUANTITY),
     });
   }
   return allPhotos;
@@ -116,4 +132,4 @@ var renderAllPhotos = function (photos) {
   similarPhotoElement.appendChild(fragment);
 };
 
-renderAllPhotos(gatAllPhotos(26));
+renderAllPhotos(getAllPhotos(MAIN_PHOTOS_QUANTITY));
