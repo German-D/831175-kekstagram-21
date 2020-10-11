@@ -16,6 +16,9 @@ var COMMENTS_RANDOM_QUANTITY = 4;
 
 var MAIN_PHOTOS_QUANTITY = 25;
 
+// Для больше деталей (часть 2) нужно захаркодить номер фото, которая будет вначале открываться
+var BIG_IMG_PHOTO_POSITION = 0;
+
 var allNames = [
   `Дима`,
   `Андрей`,
@@ -132,4 +135,45 @@ var renderAllPhotos = function (photos) {
   similarPhotoElement.appendChild(fragment);
 };
 
-renderAllPhotos(getAllPhotos(MAIN_PHOTOS_QUANTITY));
+var photoList = getAllPhotos(MAIN_PHOTOS_QUANTITY);
+renderAllPhotos(photoList);
+
+/* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
+// отрисовываем большую картинку
+
+var body = document.querySelector('body');
+var bigPicture = document.querySelector(`.big-picture`);
+var bigPictureImgDiv = bigPicture.querySelector(`.big-picture__img`);
+var bigPictureImg = bigPictureImgDiv.querySelector(`img`);
+var likesCount = bigPicture.querySelector(`.likes-count`);
+var socialCommentCount = bigPicture.querySelector('.social__comment-count');
+var commentsLoader = bigPicture.querySelector('.comments-loader');
+var commentsCount = bigPicture.querySelector(`.comments-count`);
+var socialComments = bigPicture.querySelector(`.social__comments`);
+var socialComment = socialComments.querySelector(`.social__comment`);
+
+// Добавляю в разметку ещё пару элементов li
+socialComments.appendChild(socialComment.cloneNode(true));
+socialComments.appendChild(socialComment.cloneNode(true));
+var socialCommentList = socialComments.querySelectorAll('.social__comment');
+
+// Обогощаю картинкуи форму данными
+bigPictureImg.src = photoList[BIG_IMG_PHOTO_POSITION].url;
+likesCount.textContent = photoList[BIG_IMG_PHOTO_POSITION].likes;
+commentsCount.textContent = photoList[BIG_IMG_PHOTO_POSITION].comments.length;
+
+socialCommentList.forEach(function (item, i) {
+  var socialPicture = item.querySelector(`.social__picture`);
+  socialPicture.src = photoList[BIG_IMG_PHOTO_POSITION].comments[i].avatar;
+  socialPicture.alt = photoList[BIG_IMG_PHOTO_POSITION].comments[i].name;
+});
+
+socialCommentList.forEach(function (item, i) {
+  var socialText = item.querySelector(`.social__text`);
+  socialText.textContent = photoList[BIG_IMG_PHOTO_POSITION].comments[i].message;
+});
+
+socialCommentCount.classList.add('hidden');
+commentsLoader.classList.add('hidden');
+body.classList.add('modal-open');
+bigPicture.classList.remove(`hidden`);
