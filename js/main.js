@@ -141,39 +141,49 @@ renderAllPhotos(photoList);
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // отрисовываем большую картинку
 
-var body = document.querySelector('body');
-var bigPicture = document.querySelector(`.big-picture`);
-var bigPictureImgDiv = bigPicture.querySelector(`.big-picture__img`);
-var bigPictureImg = bigPictureImgDiv.querySelector(`img`);
-var likesCount = bigPicture.querySelector(`.likes-count`);
-var socialCommentCount = bigPicture.querySelector('.social__comment-count');
-var commentsLoader = bigPicture.querySelector('.comments-loader');
-var commentsCount = bigPicture.querySelector(`.comments-count`);
-var socialComments = bigPicture.querySelector(`.social__comments`);
-var socialComment = socialComments.querySelector(`.social__comment`);
+var body = document.querySelector(`body`);
+body.classList.add(`modal-open`);
 
-// Добавляю в разметку ещё пару элементов li
-socialComments.appendChild(socialComment.cloneNode(true));
-socialComments.appendChild(socialComment.cloneNode(true));
-var socialCommentList = socialComments.querySelectorAll('.social__comment');
+var openPhoto = function (position) {
+  var bigPicture = document.querySelector(`.big-picture`);
+  var bigPictureImgDiv = bigPicture.querySelector(`.big-picture__img`);
+  var bigPictureImg = bigPictureImgDiv.querySelector(`img`);
+  var likesCount = bigPicture.querySelector(`.likes-count`);
+  var socialCommentCount = bigPicture.querySelector(`.social__comment-count`);
+  var commentsLoader = bigPicture.querySelector(`.comments-loader`);
+  var commentsCount = bigPicture.querySelector(`.comments-count`);
+  var socialComments = bigPicture.querySelector(`.social__comments`);
+  var socialComment = socialComments.querySelector(`.social__comment`);
+  var socialCommentList = socialComments.querySelectorAll(`.social__comment`);
 
-// Обогощаю картинкуи форму данными
-bigPictureImg.src = photoList[BIG_IMG_PHOTO_POSITION].url;
-likesCount.textContent = photoList[BIG_IMG_PHOTO_POSITION].likes;
-commentsCount.textContent = photoList[BIG_IMG_PHOTO_POSITION].comments.length;
+  // Обогощаю картинкуи форму данными
+  bigPictureImg.src = photoList[position].url;
+  likesCount.textContent = photoList[position].likes;
+  commentsCount.textContent = photoList[position].comments.length;
 
-socialCommentList.forEach(function (item, i) {
-  var socialPicture = item.querySelector(`.social__picture`);
-  socialPicture.src = photoList[BIG_IMG_PHOTO_POSITION].comments[i].avatar;
-  socialPicture.alt = photoList[BIG_IMG_PHOTO_POSITION].comments[i].name;
-});
+  photoList[position].comments.forEach(function (item, i) {
 
-socialCommentList.forEach(function (item, i) {
-  var socialText = item.querySelector(`.social__text`);
-  socialText.textContent = photoList[BIG_IMG_PHOTO_POSITION].comments[i].message;
-});
+    // тк в исходной html есть две ноды li, добавляю мощный if
+    if (i < 2) {
+      var socialPicture = socialCommentList[i].querySelector(`.social__picture`);
+      var socialText = socialCommentList[i].querySelector(`.social__text`);
+      socialPicture.src = item.avatar;
+      socialPicture.alt = item.name;
+      socialText.textContent = item.message;
+    } else {
+      var newComment = socialComment.cloneNode(true);
+      socialPicture = newComment.querySelector(`.social__picture`);
+      socialText = newComment.querySelector(`.social__text`);
+      socialPicture.src = item.avatar;
+      socialPicture.alt = item.name;
+      socialText.textContent = item.message;
+      socialComments.appendChild(newComment);
+    }
+  });
 
-socialCommentCount.classList.add('hidden');
-commentsLoader.classList.add('hidden');
-body.classList.add('modal-open');
-bigPicture.classList.remove(`hidden`);
+  socialCommentCount.classList.add(`hidden`);
+  commentsLoader.classList.add(`hidden`);
+  bigPicture.classList.remove(`hidden`);
+};
+
+openPhoto(BIG_IMG_PHOTO_POSITION);
