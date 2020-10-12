@@ -154,7 +154,7 @@ var openPhoto = function (position) {
   var commentsCount = bigPicture.querySelector(`.comments-count`);
   var socialComments = bigPicture.querySelector(`.social__comments`);
   var socialComment = socialComments.querySelector(`.social__comment`);
-  var socialCommentList = socialComments.querySelectorAll(`.social__comment`);
+  var newCommentsList = socialComments.cloneNode(false);
 
   // Обогощаю картинкуи форму данными
   bigPictureImg.src = photoList[position].url;
@@ -162,25 +162,16 @@ var openPhoto = function (position) {
   commentsCount.textContent = photoList[position].comments.length;
 
   photoList[position].comments.forEach(function (item, i) {
-
-    // тк в исходной html есть две ноды li, добавляю мощный if
-    if (i < 2) {
-      var socialPicture = socialCommentList[i].querySelector(`.social__picture`);
-      var socialText = socialCommentList[i].querySelector(`.social__text`);
-      socialPicture.src = item.avatar;
-      socialPicture.alt = item.name;
-      socialText.textContent = item.message;
-    } else {
-      var newComment = socialComment.cloneNode(true);
-      socialPicture = newComment.querySelector(`.social__picture`);
-      socialText = newComment.querySelector(`.social__text`);
-      socialPicture.src = item.avatar;
-      socialPicture.alt = item.name;
-      socialText.textContent = item.message;
-      socialComments.appendChild(newComment);
-    }
+    var newComment = socialComment.cloneNode(true);
+    var socialPicture = newComment.querySelector(`.social__picture`);
+    var socialText = newComment.querySelector(`.social__text`);
+    socialPicture.src = item.avatar;
+    socialPicture.alt = item.name;
+    socialText.textContent = item.message;
+    newCommentsList.appendChild(newComment);
   });
 
+  socialComments.replaceWith(newCommentsList);
   socialCommentCount.classList.add(`hidden`);
   commentsLoader.classList.add(`hidden`);
   bigPicture.classList.remove(`hidden`);
