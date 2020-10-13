@@ -1,4 +1,5 @@
 'use strict';
+var body = document.querySelector(`body`);
 
 var AVATAR_RANDOM_START = 1;
 var AVATAR_RANDOM_FINISH = 6;
@@ -141,10 +142,8 @@ renderAllPhotos(photoList);
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // отрисовываем большую картинку
 
-var body = document.querySelector(`body`);
-body.classList.add(`modal-open`);
-
-var openPhoto = function (position) {
+var openPhoto = function (currentPhoto) {
+  body.classList.add(`modal-open`);
   var bigPicture = document.querySelector(`.big-picture`);
   var bigPictureImgDiv = bigPicture.querySelector(`.big-picture__img`);
   var bigPictureImg = bigPictureImgDiv.querySelector(`img`);
@@ -157,11 +156,11 @@ var openPhoto = function (position) {
   var newCommentsList = socialComments.cloneNode(false);
 
   // Обогощаю картинкуи форму данными
-  bigPictureImg.src = photoList[position].url;
-  likesCount.textContent = photoList[position].likes;
-  commentsCount.textContent = photoList[position].comments.length;
+  bigPictureImg.src = currentPhoto.url;
+  likesCount.textContent = currentPhoto.likes;
+  commentsCount.textContent = currentPhoto.comments.length;
 
-  photoList[position].comments.forEach(function (item, i) {
+  currentPhoto.comments.forEach(function (item) {
     var newComment = socialComment.cloneNode(true);
     var socialPicture = newComment.querySelector(`.social__picture`);
     var socialText = newComment.querySelector(`.social__text`);
@@ -177,4 +176,4 @@ var openPhoto = function (position) {
   bigPicture.classList.remove(`hidden`);
 };
 
-openPhoto(BIG_IMG_PHOTO_POSITION);
+openPhoto(photoList[BIG_IMG_PHOTO_POSITION]);
