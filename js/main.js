@@ -1,4 +1,5 @@
 'use strict';
+var body = document.querySelector(`body`);
 
 var AVATAR_RANDOM_START = 1;
 var AVATAR_RANDOM_FINISH = 6;
@@ -15,6 +16,9 @@ var LIKES_RANDOM_FINISH = 200;
 var COMMENTS_RANDOM_QUANTITY = 4;
 
 var MAIN_PHOTOS_QUANTITY = 25;
+
+// Для больше деталей (часть 2) нужно захаркодить номер фото, которая будет вначале открываться
+var BIG_IMG_PHOTO_POSITION = 0;
 
 var allNames = [
   `Дима`,
@@ -132,4 +136,44 @@ var renderAllPhotos = function (photos) {
   similarPhotoElement.appendChild(fragment);
 };
 
-renderAllPhotos(getAllPhotos(MAIN_PHOTOS_QUANTITY));
+var photoList = getAllPhotos(MAIN_PHOTOS_QUANTITY);
+renderAllPhotos(photoList);
+
+/* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
+// отрисовываем большую картинку
+
+var openPhoto = function (currentPhoto) {
+  body.classList.add(`modal-open`);
+  var bigPicture = document.querySelector(`.big-picture`);
+  var bigPictureImgDiv = bigPicture.querySelector(`.big-picture__img`);
+  var bigPictureImg = bigPictureImgDiv.querySelector(`img`);
+  var likesCount = bigPicture.querySelector(`.likes-count`);
+  var socialCommentCount = bigPicture.querySelector(`.social__comment-count`);
+  var commentsLoader = bigPicture.querySelector(`.comments-loader`);
+  var commentsCount = bigPicture.querySelector(`.comments-count`);
+  var socialComments = bigPicture.querySelector(`.social__comments`);
+  var socialComment = socialComments.querySelector(`.social__comment`);
+  var newCommentsList = socialComments.cloneNode(false);
+
+  // Обогощаю картинкуи форму данными
+  bigPictureImg.src = currentPhoto.url;
+  likesCount.textContent = currentPhoto.likes;
+  commentsCount.textContent = currentPhoto.comments.length;
+
+  currentPhoto.comments.forEach(function (item) {
+    var newComment = socialComment.cloneNode(true);
+    var socialPicture = newComment.querySelector(`.social__picture`);
+    var socialText = newComment.querySelector(`.social__text`);
+    socialPicture.src = item.avatar;
+    socialPicture.alt = item.name;
+    socialText.textContent = item.message;
+    newCommentsList.appendChild(newComment);
+  });
+
+  socialComments.replaceWith(newCommentsList);
+  socialCommentCount.classList.add(`hidden`);
+  commentsLoader.classList.add(`hidden`);
+  bigPicture.classList.remove(`hidden`);
+};
+
+openPhoto(photoList[BIG_IMG_PHOTO_POSITION]);
