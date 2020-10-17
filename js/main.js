@@ -140,11 +140,12 @@ var photoList = getAllPhotos(MAIN_PHOTOS_QUANTITY);
 renderAllPhotos(photoList);
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
-// отрисовываем большую картинку
+// Отрисовываем большую картинку
+var bigPicture = document.querySelector(`.big-picture`);
+var bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');
 
 var openPhoto = function (currentPhoto) {
   body.classList.add(`modal-open`);
-  var bigPicture = document.querySelector(`.big-picture`);
   var bigPictureImgDiv = bigPicture.querySelector(`.big-picture__img`);
   var bigPictureImg = bigPictureImgDiv.querySelector(`img`);
   var likesCount = bigPicture.querySelector(`.likes-count`);
@@ -176,4 +177,54 @@ var openPhoto = function (currentPhoto) {
   bigPicture.classList.remove(`hidden`);
 };
 
-openPhoto(photoList[BIG_IMG_PHOTO_POSITION]);
+// openPhoto(photoList[BIG_IMG_PHOTO_POSITION]);
+/* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
+// Закрываем большую картинку
+
+var closeBigPhoto = function () {
+  bigPicture.classList.add(`hidden`);
+
+  document.removeEventListener('keydown', documentKeydownHandler);
+  bigPictureCancel.removeEventListener('click', bigPictureCancelClickhandler);
+
+  body.classList.remove(`modal-open`);
+};
+
+var bigPictureCancelClickhandler = function () {
+  closeBigPhoto();
+};
+
+var documentKeydownHandler = function (evt) {
+  if (evt.key === `Escape`) {
+    closeBigPhoto();
+  }
+};
+
+document.addEventListener('keydown', documentKeydownHandler);
+bigPictureCancel.addEventListener('click', bigPictureCancelClickhandler);
+
+/* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
+// Обработка загрузки фото
+var imgUploadOverlay = document.querySelector('.img-upload__overlay');
+var imgUploadCancel = imgUploadOverlay.querySelector('.img-upload__cancel');
+var uploadFile = document.querySelector('#upload-file');
+
+var closeImgUpload = function () {
+  imgUploadOverlay.classList.add('hidden');
+};
+
+var uploadFileChangeHandler = function () {
+  imgUploadOverlay.classList.remove('hidden');
+  body.classList.add(`modal-open`);
+};
+
+uploadFile.addEventListener('change', uploadFileChangeHandler);
+
+var imgUploadCancelClickHandler = function () {
+  closeImgUpload();
+};
+imgUploadCancel.addEventListener('click', imgUploadCancelClickHandler);
+
+
+
+
