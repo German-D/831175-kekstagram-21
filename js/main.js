@@ -177,7 +177,7 @@ var openPhoto = function (currentPhoto) {
   bigPicture.classList.remove(`hidden`);
 };
 
-// openPhoto(photoList[BIG_IMG_PHOTO_POSITION]);
+openPhoto(photoList[BIG_IMG_PHOTO_POSITION]);
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Закрываем большую картинку
 
