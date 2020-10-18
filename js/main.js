@@ -142,7 +142,7 @@ renderAllPhotos(photoList);
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Отрисовываем большую картинку
 var bigPicture = document.querySelector(`.big-picture`);
-var bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');
+var bigPictureCancel = bigPicture.querySelector(`.big-picture__cancel`);
 
 var openPhoto = function (currentPhoto) {
   body.classList.add(`modal-open`);
@@ -184,8 +184,8 @@ var openPhoto = function (currentPhoto) {
 var closeBigPhoto = function () {
   bigPicture.classList.add(`hidden`);
 
-  document.removeEventListener('keydown', documentKeydownHandler);
-  bigPictureCancel.removeEventListener('click', bigPictureCancelClickhandler);
+  document.removeEventListener(`keydown`, documentKeydownHandler);
+  bigPictureCancel.removeEventListener(`click`, bigPictureCancelClickhandler);
 
   body.classList.remove(`modal-open`);
 };
@@ -196,35 +196,92 @@ var bigPictureCancelClickhandler = function () {
 
 var documentKeydownHandler = function (evt) {
   if (evt.key === `Escape`) {
+    if (evt.target === textHashtags) {
+      return;
+    }
     closeBigPhoto();
+    closeImgUpload();
   }
 };
 
-document.addEventListener('keydown', documentKeydownHandler);
-bigPictureCancel.addEventListener('click', bigPictureCancelClickhandler);
+document.addEventListener(`keydown`, documentKeydownHandler);
+bigPictureCancel.addEventListener(`click`, bigPictureCancelClickhandler);
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Обработка загрузки фото
-var imgUploadOverlay = document.querySelector('.img-upload__overlay');
-var imgUploadCancel = imgUploadOverlay.querySelector('.img-upload__cancel');
-var uploadFile = document.querySelector('#upload-file');
+var imgUploadOverlay = document.querySelector(`.img-upload__overlay`);
+var imgUploadCancel = imgUploadOverlay.querySelector(`.img-upload__cancel`);
+var uploadFile = document.querySelector(`#upload-file`);
 
 var closeImgUpload = function () {
-  imgUploadOverlay.classList.add('hidden');
+  imgUploadOverlay.classList.add(`hidden`);
+  uploadFile.value = ``;
+  uploadFile.addEventListener(`change`, uploadFileChangeHandler);
+
+  document.removeEventListener(`keydown`, documentKeydownHandler);
+  imgUploadCancel.removeEventListener(`click`, imgUploadCancelClickHandler);
+  body.classList.remove(`modal-open`);
+};
+
+var openImgUpload = function () {
+  imgUploadOverlay.classList.remove(`hidden`);
+  body.classList.add(`modal-open`);
+  document.addEventListener(`keydown`, documentKeydownHandler);
+  imgUploadCancel.addEventListener(`click`, imgUploadCancelClickHandler);
+
+  uploadFile.removeEventListener(`change`, uploadFileChangeHandler);
 };
 
 var uploadFileChangeHandler = function () {
-  imgUploadOverlay.classList.remove('hidden');
-  body.classList.add(`modal-open`);
+  openImgUpload();
 };
-
-uploadFile.addEventListener('change', uploadFileChangeHandler);
 
 var imgUploadCancelClickHandler = function () {
   closeImgUpload();
 };
-imgUploadCancel.addEventListener('click', imgUploadCancelClickHandler);
 
+uploadFile.addEventListener(`change`, uploadFileChangeHandler);
 
+/* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
+// Обработка ползунка
 
+var effectLevelPin = imgUploadOverlay.querySelector(`.effect-level__pin`);
+var effectLevelValue = imgUploadOverlay.querySelector(`.effect-level__value`);
+var effectLevelLine = imgUploadOverlay.querySelector(`.effect-level__line`);
 
+var imgUploadOverlayMouseupHandler = function (evt) {
+  var pinCoordinateX = evt.target.getBoundingClientRect().x - effectLevelLine.getBoundingClientRect().x;
+  var effectLevelWidth = effectLevelLine.getBoundingClientRect().width;
+  effectLevelValue.value = Math.round(100 * (pinCoordinateX / effectLevelWidth));
+};
+
+effectLevelPin.addEventListener(`mouseup`, imgUploadOverlayMouseupHandler);
+
+/* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
+// Обработка смены фильтра
+
+var effectsList = document.querySelector(`.effects__list`);
+var effectsItems = effectsList.querySelectorAll(`.effects__item`);
+
+var effectsItemChangeHandler = function () {
+  effectLevelValue.value = ``;
+};
+
+// Сбрасываю уровень эффекта при смене фильтра
+effectsItems.forEach(function (item) {
+  item.addEventListener(`change`, effectsItemChangeHandler);
+});
+
+/* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
+// Валидация хеш-тегов
+var textHashtags = imgUploadOverlay.querySelector(`.text__hashtags`);
+var validationRules = /(^|\B)#(?![0-9_]+\b)([a-zA-Z0-9_]{1,20})(\b|\r)/gi;
+
+var textHashtagsInputHandler = function (evt) {
+  if (validationRules.test(evt.target.value)) {
+    return;
+  } else {
+    textHashtags.setCustomValidity('Такой хэштег невозможен');
+  }
+};
+textHashtags.addEventListener(`input`, textHashtagsInputHandler);
