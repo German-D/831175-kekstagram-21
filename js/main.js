@@ -279,7 +279,7 @@ var validationRules = /(^|\B)#(?![0-9_]+\b)([a-zA-Z0-9_]{1,20})(\b|\r)/gi;
 
 var textHashtagsInputHandler = function (evt) {
   if (validationRules.test(evt.target.value)) {
-    return;
+    textHashtags.setCustomValidity('');
   } else {
     textHashtags.setCustomValidity('Такой хэштег невозможен');
   }
