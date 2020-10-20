@@ -226,6 +226,13 @@ var closeImgUpload = function () {
   body.classList.remove(`modal-open`);
   scaleControlBigger.removeEventListener(`click`, scaleControlBiggerClickHandler);
   scaleControlSmaller.removeEventListener(`click`, scaleControlSmallerClickHandler);
+
+  // Сбрасываю параметры фото при его закрытии
+  effectnone.checked = true;
+  imgUploadPreviewImg.classList = ``;
+  scaleControlValue.value = `100%`;
+  imgUploadPreviewImg.style = `transform: scale(1);`;
+  effectLevelValue.value = ``;
 };
 
 var openImgUpload = function () {
@@ -271,6 +278,7 @@ var imgUploadPreviewImg = imgUploadPreview.querySelector(`img`);
 var imgUploadEffectLevel = imgUploadOverlay.querySelector(`.img-upload__effect-level`);
 var effectsList = imgUploadOverlay.querySelector(`.effects__list`);
 var effectsItems = effectsList.querySelectorAll(`.effects__item`);
+var effectnone = effectsList.querySelector(`#effect-none`);
 
 var effectsItemChangeHandler = function (evt) {
   imgUploadPreviewImg.classList = ``;
