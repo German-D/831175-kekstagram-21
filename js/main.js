@@ -329,5 +329,5 @@ var scaleControlBiggerClickHandler = function () {
 var changeScale = function () {
   var currentScale = Number(scaleControlValue.value.substring(0, scaleControlValue.value.length - 1));
   var scaleProportion = currentScale / 100;
-  imgUploadPreviewImg.style = `transform: scale(` + scaleProportion + `);`;
+  imgUploadPreviewImg.style = `transform: scale(${scaleProportion});`;
 };
