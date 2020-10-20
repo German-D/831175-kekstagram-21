@@ -199,6 +199,9 @@ var documentKeydownHandler = function (evt) {
     if (evt.target === textHashtags) {
       return;
     }
+    if (evt.target === textDescription) {
+      return;
+    }
     closeBigPhoto();
     closeImgUpload();
   }
@@ -221,6 +224,8 @@ var closeImgUpload = function () {
   document.removeEventListener(`keydown`, documentKeydownHandler);
   imgUploadCancel.removeEventListener(`click`, imgUploadCancelClickHandler);
   body.classList.remove(`modal-open`);
+  scaleControlBigger.removeEventListener(`click`, scaleControlBiggerClickHandler);
+  scaleControlSmaller.removeEventListener(`click`, scaleControlSmallerClickHandler);
 };
 
 var openImgUpload = function () {
@@ -228,6 +233,8 @@ var openImgUpload = function () {
   body.classList.add(`modal-open`);
   document.addEventListener(`keydown`, documentKeydownHandler);
   imgUploadCancel.addEventListener(`click`, imgUploadCancelClickHandler);
+  scaleControlBigger.addEventListener(`click`, scaleControlBiggerClickHandler);
+  scaleControlSmaller.addEventListener(`click`, scaleControlSmallerClickHandler);
 
   uploadFile.removeEventListener(`change`, uploadFileChangeHandler);
 };
@@ -259,12 +266,22 @@ effectLevelPin.addEventListener(`mouseup`, imgUploadOverlayMouseupHandler);
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Обработка смены фильтра
-
-var effectsList = document.querySelector(`.effects__list`);
+var imgUploadPreview = imgUploadOverlay.querySelector(`.img-upload__preview`);
+var imgUploadPreviewImg = imgUploadPreview.querySelector(`img`);
+var imgUploadEffectLevel = imgUploadOverlay.querySelector(`.img-upload__effect-level`);
+var effectsList = imgUploadOverlay.querySelector(`.effects__list`);
 var effectsItems = effectsList.querySelectorAll(`.effects__item`);
 
-var effectsItemChangeHandler = function () {
+var effectsItemChangeHandler = function (evt) {
+  imgUploadPreviewImg.classList = ``;
+  if (evt.target.value === `none`) {
+    imgUploadEffectLevel.classList.add(`hidden`);
+  } else {
+    imgUploadEffectLevel.classList.remove(`hidden`);
+  }
   effectLevelValue.value = ``;
+  var newClass = `effects__preview--` + evt.target.value;
+  imgUploadPreviewImg.classList.add(newClass);
 };
 
 // Сбрасываю уровень эффекта при смене фильтра
@@ -273,15 +290,44 @@ effectsItems.forEach(function (item) {
 });
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
-// Валидация хеш-тегов
+// Валидация хеш-тегов и комментов
+var textDescription = imgUploadOverlay.querySelector(`.text__description`);
 var textHashtags = imgUploadOverlay.querySelector(`.text__hashtags`);
-var validationRules = /(^|\B)#(?![0-9_]+\b)([a-zA-Z0-9_]{1,20})(\b|\r)/gi;
 
 var textHashtagsInputHandler = function (evt) {
+  var validationRules = /(^|\B)#(?![0-9_]+\b)([a-zA-Z0-9_]{1,20})(\b|\r)/gi;
   if (validationRules.test(evt.target.value)) {
-    textHashtags.setCustomValidity('');
+    textHashtags.setCustomValidity(``);
   } else {
-    textHashtags.setCustomValidity('Такой хэштег невозможен');
+    textHashtags.setCustomValidity(`Такой хэштег невозможен`);
   }
 };
 textHashtags.addEventListener(`input`, textHashtagsInputHandler);
+
+/* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
+// Масштабирование
+var scaleControlSmaller = imgUploadOverlay.querySelector(`.scale__control--smaller`);
+var scaleControlBigger = imgUploadOverlay.querySelector(`.scale__control--bigger`);
+var scaleControlValue = imgUploadOverlay.querySelector(`.scale__control--value`);
+
+var scaleControlSmallerClickHandler = function () {
+  var currentScale = Number(scaleControlValue.value.substring(0, scaleControlValue.value.length - 1));
+  if (currentScale >= 50) {
+    scaleControlValue.value = (currentScale - 25) + `%`;
+  }
+  changeScale();
+};
+
+var scaleControlBiggerClickHandler = function () {
+  var currentScale = Number(scaleControlValue.value.substring(0, scaleControlValue.value.length - 1));
+  if (currentScale <= 75) {
+    scaleControlValue.value = (currentScale + 25) + `%`;
+  }
+  changeScale();
+};
+
+var changeScale = function () {
+  var currentScale = Number(scaleControlValue.value.substring(0, scaleControlValue.value.length - 1));
+  var scaleProportion = currentScale / 100;
+  imgUploadPreviewImg.style = `transform: scale(` + scaleProportion + `);`;
+};
