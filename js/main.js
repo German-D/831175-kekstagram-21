@@ -17,9 +17,6 @@ var COMMENTS_RANDOM_QUANTITY = 4;
 
 var MAIN_PHOTOS_QUANTITY = 25;
 
-// Для больше деталей (часть 2) нужно захаркодить номер фото, которая будет вначале открываться
-var BIG_IMG_PHOTO_POSITION = 0;
-
 var allNames = [
   `Дима`,
   `Андрей`,
