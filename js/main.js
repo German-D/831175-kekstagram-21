@@ -17,9 +17,6 @@ var COMMENTS_RANDOM_QUANTITY = 4;
 
 var MAIN_PHOTOS_QUANTITY = 25;
 
-// Для больше деталей (часть 2) нужно захаркодить номер фото, которая будет вначале открываться
-var BIG_IMG_PHOTO_POSITION = 0;
-
 var allNames = [
   `Дима`,
   `Андрей`,
@@ -107,7 +104,7 @@ var getAllPhotos = function (photoQuantity) {
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Отрисовка фотографий
 
-var renderPhoto = function (photo) {
+var renderPhoto = function (photo, i) {
   var pictureTemplate = document.querySelector(`#picture`)
     .content
     .querySelector(`.picture`);
@@ -117,6 +114,7 @@ var renderPhoto = function (photo) {
   var photoLikes = photoElement.querySelector(`.picture__likes`);
   var photoComments = photoElement.querySelector(`.picture__comments`);
 
+  photoUrl.setAttribute("data-index", i);
   photoUrl.src = photo.url;
   photoLikes.textContent = photo.likes;
   photoComments.textContent = photo.comments.length;
@@ -129,7 +127,7 @@ var renderAllPhotos = function (photos) {
   var fragment = document.createDocumentFragment();
 
   photos.forEach(function (item, i) {
-    var newPhoto = renderPhoto(photos[i]);
+    var newPhoto = renderPhoto(photos[i], i);
     fragment.appendChild(newPhoto);
   });
 
@@ -141,11 +139,32 @@ renderAllPhotos(photoList);
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Отрисовываем большую картинку
+var socialFooterText = document.querySelector('.social__footer-text');
 var bigPicture = document.querySelector(`.big-picture`);
 var bigPictureCancel = bigPicture.querySelector(`.big-picture__cancel`);
+var photosList = document.querySelectorAll('.picture');
+
+var bigPictureCancelClickhandler = function () {
+  closeBigPhoto();
+};
+
+var documentKeydownHandler = function (evt) {
+  if (evt.key === `Escape`) {
+    if (evt.target === textHashtags) {
+      return;
+    }
+    if (evt.target === textDescription) {
+      return;
+    }
+    if (evt.target === socialFooterText) {
+      return;
+    }
+    closeBigPhoto();
+    closeImgUpload();
+  }
+};
 
 var openPhoto = function (currentPhoto) {
-  body.classList.add(`modal-open`);
   var bigPictureImgDiv = bigPicture.querySelector(`.big-picture__img`);
   var bigPictureImg = bigPictureImgDiv.querySelector(`img`);
   var likesCount = bigPicture.querySelector(`.likes-count`);
@@ -156,7 +175,7 @@ var openPhoto = function (currentPhoto) {
   var socialComment = socialComments.querySelector(`.social__comment`);
   var newCommentsList = socialComments.cloneNode(false);
 
-  // Обогощаю картинкуи форму данными
+  // Обогощаю картинку и форму данными
   bigPictureImg.src = currentPhoto.url;
   likesCount.textContent = currentPhoto.likes;
   commentsCount.textContent = currentPhoto.comments.length;
@@ -171,13 +190,33 @@ var openPhoto = function (currentPhoto) {
     newCommentsList.appendChild(newComment);
   });
 
+  body.classList.add(`modal-open`);
   socialComments.replaceWith(newCommentsList);
   socialCommentCount.classList.add(`hidden`);
   commentsLoader.classList.add(`hidden`);
   bigPicture.classList.remove(`hidden`);
+
+  document.addEventListener(`keydown`, documentKeydownHandler);
+  bigPictureCancel.addEventListener(`click`, bigPictureCancelClickhandler);
+
 };
 
-openPhoto(photoList[BIG_IMG_PHOTO_POSITION]);
+var photosListClickHandler = function (evt) {
+  var photoIndex = evt.target.dataset.index;
+  openPhoto(photoList[photoIndex]);
+};
+
+var photosListKeydownHandler = function (evt) {
+  if (evt.key === 'Enter') {
+    var photoIndex = evt.target.querySelector('img').dataset.index;
+    openPhoto(photoList[photoIndex]);
+  }
+};
+
+photosList.forEach(function (item) {
+  item.addEventListener('click', photosListClickHandler);
+  item.addEventListener('keydown', photosListKeydownHandler);
+});
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Закрываем большую картинку
 
@@ -188,27 +227,8 @@ var closeBigPhoto = function () {
   bigPictureCancel.removeEventListener(`click`, bigPictureCancelClickhandler);
 
   body.classList.remove(`modal-open`);
-};
 
-var bigPictureCancelClickhandler = function () {
-  closeBigPhoto();
 };
-
-var documentKeydownHandler = function (evt) {
-  if (evt.key === `Escape`) {
-    if (evt.target === textHashtags) {
-      return;
-    }
-    if (evt.target === textDescription) {
-      return;
-    }
-    closeBigPhoto();
-    closeImgUpload();
-  }
-};
-
-document.addEventListener(`keydown`, documentKeydownHandler);
-bigPictureCancel.addEventListener(`click`, bigPictureCancelClickhandler);
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Обработка загрузки фото
