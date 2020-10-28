@@ -52,14 +52,7 @@
   var effectLevelPin = imgUploadOverlay.querySelector(`.effect-level__pin`);
   var effectLevelValue = imgUploadOverlay.querySelector(`.effect-level__value`);
   var effectLevelLine = imgUploadOverlay.querySelector(`.effect-level__line`);
-
-  var imgUploadOverlayMouseupHandler = function (evt) {
-    var pinCoordinateX = evt.target.getBoundingClientRect().x - effectLevelLine.getBoundingClientRect().x;
-    var effectLevelWidth = effectLevelLine.getBoundingClientRect().width;
-    effectLevelValue.value = Math.round(100 * (pinCoordinateX / effectLevelWidth));
-  };
-
-  effectLevelPin.addEventListener(`mouseup`, imgUploadOverlayMouseupHandler);
+  var effectLevelDepth = imgUploadOverlay.querySelector(`.effect-level__depth`);
 
   /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
   // Обработка смены фильтра
@@ -72,6 +65,8 @@
 
   var effectsItemChangeHandler = function (evt) {
     imgUploadPreviewImg.classList = ``;
+    effectLevelPin.style.left = effectLevelLine.getBoundingClientRect().width + `px`;
+    effectLevelDepth.style.width = effectLevelLine.getBoundingClientRect().width + `px`;
     if (evt.target.value === `none`) {
       imgUploadEffectLevel.classList.add(`hidden`);
     } else {
@@ -80,6 +75,75 @@
     effectLevelValue.value = ``;
     var newClass = `effects__preview--` + evt.target.value;
     imgUploadPreviewImg.classList.add(newClass);
+
+    var effectLevelPinMousedownHandler = function (downEvt) {
+      downEvt.preventDefault();
+
+      var startCoords = {
+        x: downEvt.clientX,
+      };
+
+      var documentMouseMoveHandler = function (moveEvt) {
+        moveEvt.preventDefault();
+
+        var shift = {
+          x: startCoords.x - moveEvt.clientX,
+        };
+
+        startCoords = {
+          x: moveEvt.clientX,
+        };
+
+        if (effectLevelPin.getBoundingClientRect().x < effectLevelLine.getBoundingClientRect().x) {
+          effectLevelPin.style.left = 0 + `px`;
+        }
+
+        if (effectLevelPin.getBoundingClientRect().x > effectLevelLine.getBoundingClientRect().x + effectLevelLine.getBoundingClientRect().width) {
+          effectLevelPin.style.left = effectLevelLine.getBoundingClientRect().width + `px`;
+        }
+
+        effectLevelPin.style.left = (effectLevelPin.offsetLeft - shift.x) + `px`;
+        effectLevelDepth.style.width = (effectLevelPin.offsetLeft - shift.x) + `px`;
+
+        var pinCoordinateX = moveEvt.target.getBoundingClientRect().x - effectLevelLine.getBoundingClientRect().x;
+        var effectLevelWidth = effectLevelLine.getBoundingClientRect().width;
+        effectLevelValue.value = Math.round(100 * (pinCoordinateX / effectLevelWidth));
+        var proportion = effectLevelValue.value / 100;
+
+        if (newClass === `effects__preview--chrome`) {
+          imgUploadPreviewImg.style = `filter: grayscale(${proportion})`;
+        }
+
+        if (newClass === `effects__preview--sepia`) {
+          imgUploadPreviewImg.style = `filter: sepia(${proportion})`;
+        }
+
+        if (newClass === `effects__preview--marvin`) {
+          imgUploadPreviewImg.style = `filter: invert(${effectLevelValue.value}%)`;
+        }
+
+        if (newClass === `effects__preview--phobos`) {
+          imgUploadPreviewImg.style = `filter: blur(${proportion * 3}px)`;
+        }
+
+        if (newClass === `effects__preview--heat`) {
+          imgUploadPreviewImg.style = `filter: blur(${proportion * 3})`;
+        }
+      };
+
+      var documentMouseupHandler = function (upEvt) {
+        upEvt.preventDefault();
+
+        document.removeEventListener(`mousemove`, documentMouseMoveHandler);
+        document.removeEventListener(`mouseup`, documentMouseupHandler);
+        effectLevelPin.addEventListener(`mousedown`, effectLevelPinMousedownHandler);
+
+      };
+
+      document.addEventListener(`mousemove`, documentMouseMoveHandler);
+      document.addEventListener(`mouseup`, documentMouseupHandler);
+    };
+    effectLevelPin.addEventListener(`mousedown`, effectLevelPinMousedownHandler);
   };
 
   // Сбрасываю уровень эффекта при смене фильтра
