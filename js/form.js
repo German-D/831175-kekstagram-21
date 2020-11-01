@@ -52,14 +52,7 @@
   var effectLevelPin = imgUploadOverlay.querySelector(`.effect-level__pin`);
   var effectLevelValue = imgUploadOverlay.querySelector(`.effect-level__value`);
   var effectLevelLine = imgUploadOverlay.querySelector(`.effect-level__line`);
-
-  var imgUploadOverlayMouseupHandler = function (evt) {
-    var pinCoordinateX = evt.target.getBoundingClientRect().x - effectLevelLine.getBoundingClientRect().x;
-    var effectLevelWidth = effectLevelLine.getBoundingClientRect().width;
-    effectLevelValue.value = Math.round(100 * (pinCoordinateX / effectLevelWidth));
-  };
-
-  effectLevelPin.addEventListener(`mouseup`, imgUploadOverlayMouseupHandler);
+  var effectLevelDepth = imgUploadOverlay.querySelector(`.effect-level__depth`);
 
   /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
   // Обработка смены фильтра
@@ -69,23 +62,92 @@
   var effectsList = imgUploadOverlay.querySelector(`.effects__list`);
   var effectsItems = effectsList.querySelectorAll(`.effects__item`);
   var effectnone = effectsList.querySelector(`#effect-none`);
+  var newFilterValue;
 
   var effectsItemChangeHandler = function (evt) {
     imgUploadPreviewImg.classList = ``;
+    imgUploadPreviewImg.style = ``;
     if (evt.target.value === `none`) {
       imgUploadEffectLevel.classList.add(`hidden`);
     } else {
       imgUploadEffectLevel.classList.remove(`hidden`);
     }
-    effectLevelValue.value = ``;
-    var newClass = `effects__preview--` + evt.target.value;
-    imgUploadPreviewImg.classList.add(newClass);
+    effectLevelPin.style.left = effectLevelLine.getBoundingClientRect().width + `px`;
+    effectLevelDepth.style.width = effectLevelLine.getBoundingClientRect().width + `px`;
+
+    newFilterValue = evt.target.value;
+    imgUploadPreviewImg.classList.add(`effects__preview--` + newFilterValue);
+    effectLevelValue.value = 100;
   };
 
   // Сбрасываю уровень эффекта при смене фильтра
   effectsItems.forEach(function (item) {
     item.addEventListener(`change`, effectsItemChangeHandler);
   });
+
+  var effectLevelPinMousedownHandler = function (downEvt) {
+    downEvt.preventDefault();
+
+    var startCoords = {
+      x: downEvt.clientX,
+    };
+
+    var currentPosition = parseInt(effectLevelPin.style.left, 10) || 0;
+    var effectLevelLineWidth = effectLevelLine.getBoundingClientRect().width;
+
+    var documentMouseMoveHandler = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+      };
+
+      var newPosition = currentPosition - shift.x;
+
+      if (newPosition < 0) {
+        newPosition = 0;
+      } else if (newPosition > effectLevelLineWidth) {
+        newPosition = effectLevelLineWidth;
+      }
+
+      effectLevelPin.style.left = newPosition + `px`;
+      effectLevelDepth.style.width = newPosition + `px`;
+
+      effectLevelValue.value = Math.round(100 * (newPosition / effectLevelLineWidth));
+      var proportion = effectLevelValue.value / 100;
+
+      switch (newFilterValue) {
+        case `chrome`:
+          imgUploadPreviewImg.style = `filter: grayscale(${proportion})`;
+          break;
+        case `sepia`:
+          imgUploadPreviewImg.style = `filter: sepia(${proportion})`;
+          break;
+        case `marvin`:
+          imgUploadPreviewImg.style = `filter: invert(${effectLevelValue.value}%)`;
+          break;
+        case `phobos`:
+          imgUploadPreviewImg.style = `filter: blur(${proportion * 3}px)`;
+          break;
+        case `heat`:
+          imgUploadPreviewImg.style = `filter: brightness(${proportion * 3})`;
+          break;
+      }
+    };
+
+    var documentMouseupHandler = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener(`mousemove`, documentMouseMoveHandler);
+      document.removeEventListener(`mouseup`, documentMouseupHandler);
+      effectLevelPin.addEventListener(`mousedown`, effectLevelPinMousedownHandler);
+
+    };
+
+    document.addEventListener(`mousemove`, documentMouseMoveHandler);
+    document.addEventListener(`mouseup`, documentMouseupHandler);
+  };
+  effectLevelPin.addEventListener(`mousedown`, effectLevelPinMousedownHandler);
 
   /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
   // Валидация хеш-тегов и комментов
