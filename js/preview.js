@@ -7,7 +7,6 @@
   var socialFooterText = document.querySelector(`.social__footer-text`);
   var bigPicture = document.querySelector(`.big-picture`);
   var bigPictureCancel = bigPicture.querySelector(`.big-picture__cancel`);
-  var photosList = document.querySelectorAll(`.picture`);
 
   var bigPictureCancelClickhandler = function () {
     closeBigPhoto();
@@ -66,17 +65,6 @@
 
   };
 
-  var photosListClickHandler = function (target) {
-    var photoIndex = target.querySelector(`img`).dataset.index;
-    openPhoto(window.gallery.photoList[photoIndex]);
-  };
-
-  photosList.forEach(function (item) {
-    item.addEventListener(`click`, function () {
-      photosListClickHandler(item);
-    });
-  // item.addEventListener('keydown', photosListKeydownHandler);
-  });
   /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
   // Закрываем большую картинку
 
@@ -93,5 +81,6 @@
   window.preview = {
     body,
     documentKeydownHandler,
+    openPhoto,
   };
 })();
