@@ -63,4 +63,8 @@
   };
 
   window.backend.loadPhotos(successHandler, errorHandler);
+
+  window.gallery = {
+    errorHandler,
+  };
 })();

@@ -13,6 +13,7 @@
   };
 
   var documentKeydownHandler = function (evt) {
+    console.log(evt);
     if (evt.key === `Escape`) {
       if (evt.target === window.form.textHashtags) {
         return;
@@ -25,6 +26,7 @@
       }
       closeBigPhoto();
       window.form.closeImgUpload();
+      window.form.closeSuccessWindow();
     }
   };
 
