@@ -16,7 +16,6 @@
     uploadFile.addEventListener(`change`, uploadFileChangeHandler);
 
     document.removeEventListener(`keydown`, window.preview.documentKeydownHandler);
-    console.log(`удаление`);
     imgUploadCancel.removeEventListener(`click`, imgUploadCancelClickHandler);
     window.preview.body.classList.remove(`modal-open`);
     scaleControlBigger.removeEventListener(`click`, scaleControlBiggerClickHandler);
@@ -199,11 +198,22 @@
     imgUploadPreviewImg.style = `transform: scale(${scaleProportion});`;
   };
 
+  /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
+  // Обработка отправки формы
+
+  var successClickHandler = function (evt) {
+    var successInner = document.querySelector(`.success__inner`);
+    if (evt.target !== successInner) {
+      closeSuccessWindow();
+    }
+  };
+
   var openSuccessWindow = function () {
+    var success = document.querySelector(`.success`);
     var successButton = document.querySelector(`.success__button`);
     successButton.addEventListener(`click`, successButtonClickHandler);
     document.addEventListener(`keydown`, window.preview.documentKeydownHandler);
-    console.log(`добавление`);
+    success.addEventListener(`click`, successClickHandler);
   };
 
   var successButtonClickHandler = function () {
@@ -236,10 +246,19 @@
     closeErrorWindow();
   };
 
+  var errorClickHandler = function (evt) {
+    var errorInner = document.querySelector(`.error__inner`);
+    if (evt.target !== errorInner) {
+      closeErrorWindow();
+    }
+  };
+
   var openErrorWindow = function () {
     var errorButton = document.querySelector(`.error__button`);
+    var error = document.querySelector(`.error`);
     errorButton.addEventListener(`click`, errorButtonClickHandler);
     document.addEventListener(`keydown`, window.preview.documentKeydownHandler);
+    error.addEventListener(`click`, errorClickHandler);
   };
 
   var formErrorHandler = function () {
@@ -253,9 +272,9 @@
   };
 
   imgUploadForm.addEventListener(`submit`, function (evt) {
-    window.backend.saveForm(new FormData(imgUploadForm), closeImgUpload, formErrorHandler);
+    window.backend.saveForm(new FormData(imgUploadForm), renderSuccessWindow, formErrorHandler);
+    closeImgUpload();
     evt.preventDefault();
-    renderSuccessWindow();
   });
 
   window.form = {
