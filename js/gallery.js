@@ -1,71 +1,5 @@
 'use strict';
 (function () {
-
-  var getRandomNumberInRange = function (min, max) {
-    var rand = min + Math.random() * (max + 1 - min);
-    return Math.floor(rand);
-  };
-
-  // Скопипастил лучшее решение для перемешивания массива со stackoverflow
-  var shuffle = function (array) {
-    var list = array.slice();
-    var m = list.length;
-    var temp;
-    var j;
-
-    // Check if there's still elements remaining
-    while (m) {
-
-      // Pick remaining element
-      j = Math.floor(Math.random() * m--);
-
-      // Swap it with the current element
-      temp = list[m];
-      list[m] = list[j];
-      list[j] = temp;
-    }
-
-    return list;
-  };
-
-  /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
-  var getAllComments = function (commentsQuantity) {
-    var allComments = [];
-
-    // В зависимости от константы кол-ва комментариев — создаю массив с коментариями
-    for (var j = 0; j < commentsQuantity; j++) {
-      allComments.push({
-        avatar: `img/avatar-` + getRandomNumberInRange(window.data.AVATAR_RANDOM_START, window.data.AVATAR_RANDOM_FINISH) + `.svg`,
-        message: getMessages(window.data.allMessages),
-        name: window.data.allNames[getRandomNumberInRange(window.data.NAME_RANDOM_START, window.data.NAME_RANDOM_FINISH)]
-      });
-    }
-    return allComments;
-  };
-
-  /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
-  var getMessages = function (messagesArray) {
-    var messagesQuantity = getRandomNumberInRange(window.data.MESSAGE_RANDOM_START, window.data.MESSAGE_RANDOM_FINISH);
-    return shuffle(messagesArray).slice(0, messagesQuantity).join(` `);
-  };
-
-  /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
-  // Создаю массив из фотографий
-  var getAllPhotos = function (photoQuantity) {
-    var allPhotos = [];
-
-    for (var i = 1; i <= photoQuantity; i++) {
-      allPhotos.push({
-        url: `photos/${i}.jpg`,
-        description: `Описание фотографии`,
-        likes: getRandomNumberInRange(window.data.LIKES_RANDOM_START, window.data.LIKES_RANDOM_FINISH),
-        comments: getAllComments(window.data.COMMENTS_RANDOM_QUANTITY),
-      });
-    }
-    return allPhotos;
-  };
-
-
   /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
   // Отрисовка фотографий
 
@@ -97,12 +31,36 @@
     });
 
     similarPhotoElement.appendChild(fragment);
+
+    // Сразу добавляю обработчик на клик для каждой картинки
+    var photosCollection = document.querySelectorAll(`.picture`);
+
+    var photosListClickHandler = function (i) {
+      window.preview.openPhoto(photos[i]);
+    };
+
+    photosCollection.forEach(function (item, i) {
+      item.addEventListener(`click`, function () {
+        photosListClickHandler(i);
+      });
+    });
   };
 
-  var photoList = getAllPhotos(window.data.MAIN_PHOTOS_QUANTITY);
-  renderAllPhotos(photoList);
-
-  window.gallery = {
-    photoList,
+  var successHandler = function (photos) {
+    renderAllPhotos(photos);
   };
+
+  var errorHandler = function (errorMessage) {
+    var node = document.createElement(`div`);
+    node.style = `z-index: 100; margin: 0 auto; text-align: center; background-color: red;`;
+    node.style.position = `absolute`;
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = `30px`;
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement(`afterbegin`, node);
+  };
+
+  window.backend.loadPhotos(successHandler, errorHandler);
 })();
