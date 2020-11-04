@@ -2,12 +2,12 @@
 
 (function () {
 
-  var loadURL = `https://21.javascript.pages.academy/kekstagram/data`;
+  var LOAD_URL = `https://21.javascript.pages.academy/kekstagram/data`;
+  var TIMEOUT_IN_MS = 10000;
 
   var StatusCode = {
     OK: 200
   };
-  var TIMEOUT_IN_MS = 10000;
 
   var loadPhotos = function (onSuccess, onError) {
     var xhr = new XMLHttpRequest();
@@ -31,7 +31,7 @@
 
     xhr.timeout = TIMEOUT_IN_MS;
 
-    xhr.open(`GET`, loadURL);
+    xhr.open(`GET`, LOAD_URL);
     xhr.send();
   };
 

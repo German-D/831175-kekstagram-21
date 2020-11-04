@@ -21,7 +21,7 @@
     return photoElement;
   };
 
-  var successHandler = function (photos) {
+  var renderAllPhotos = function (photos) {
     var similarPhotoElement = document.querySelector(`.pictures`);
     var fragment = document.createDocumentFragment();
 
@@ -44,6 +44,10 @@
         photosListClickHandler(i);
       });
     });
+  };
+
+  var successHandler = function (photos) {
+    renderAllPhotos(photos);
   };
 
   var errorHandler = function (errorMessage) {
