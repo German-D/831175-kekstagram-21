@@ -226,7 +226,7 @@
     document.removeEventListener(`keydown`, window.preview.documentKeydownHandler);
   };
 
-  var renderSuccessWindow = function () {
+  var formSuccessHandler = function () {
     var successTemplate = document.querySelector(`#success`)
       .content
       .querySelector(`.success`);
@@ -272,7 +272,7 @@
   };
 
   imgUploadForm.addEventListener(`submit`, function (evt) {
-    window.backend.saveForm(new FormData(imgUploadForm), renderSuccessWindow, formErrorHandler);
+    window.backend.saveForm(new FormData(imgUploadForm), formSuccessHandler, formErrorHandler);
     closeImgUpload();
     evt.preventDefault();
   });
