@@ -25,6 +25,7 @@
       }
       closeBigPhoto();
       window.form.closeImgUpload();
+      window.form.closeSuccessWindow();
     }
   };
 

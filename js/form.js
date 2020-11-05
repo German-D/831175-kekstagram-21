@@ -5,6 +5,10 @@
   var imgUploadOverlay = document.querySelector(`.img-upload__overlay`);
   var imgUploadCancel = imgUploadOverlay.querySelector(`.img-upload__cancel`);
   var uploadFile = document.querySelector(`#upload-file`);
+  var imgUploadForm = document.querySelector(`.img-upload__form`);
+  var textDescription = imgUploadOverlay.querySelector(`.text__description`);
+  var textHashtags = imgUploadOverlay.querySelector(`.text__hashtags`);
+  var main = document.querySelector(`main`);
 
   var closeImgUpload = function () {
     imgUploadOverlay.classList.add(`hidden`);
@@ -19,10 +23,14 @@
 
     // Сбрасываю параметры фото при его закрытии
     effectnone.checked = true;
+    imgUploadEffectLevel.classList.add(`hidden`);
     imgUploadPreviewImg.classList = ``;
     scaleControlValue.value = `100%`;
-    imgUploadPreviewImg.style = `transform: scale(1);`;
+    // imgUploadPreviewImg.style = `transform: scale(1);`;
+    imgUploadPreviewImg.style = ``;
     effectLevelValue.value = ``;
+    textHashtags.value = ``;
+    textDescription.value = ``;
   };
 
   var openImgUpload = function () {
@@ -151,8 +159,6 @@
 
   /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
   // Валидация хеш-тегов и комментов
-  var textDescription = imgUploadOverlay.querySelector(`.text__description`);
-  var textHashtags = imgUploadOverlay.querySelector(`.text__hashtags`);
 
   var textHashtagsInputHandler = function (evt) {
     var validationRules = /(^|\B)#(?![0-9_]+\b)([a-zA-Z0-9_]{1,20})(\b|\r)/gi;
@@ -192,10 +198,90 @@
     imgUploadPreviewImg.style = `transform: scale(${scaleProportion});`;
   };
 
+  /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
+  // Обработка отправки формы
+
+  var successClickHandler = function (evt) {
+    var successInner = document.querySelector(`.success__inner`);
+    if (evt.target !== successInner) {
+      closeSuccessWindow();
+    }
+  };
+
+  var openSuccessWindow = function () {
+    var success = document.querySelector(`.success`);
+    var successButton = document.querySelector(`.success__button`);
+    successButton.addEventListener(`click`, successButtonClickHandler);
+    document.addEventListener(`keydown`, window.preview.documentKeydownHandler);
+    success.addEventListener(`click`, successClickHandler);
+  };
+
+  var successButtonClickHandler = function () {
+    closeSuccessWindow();
+  };
+
+  var closeSuccessWindow = function () {
+    var success = document.querySelector(`.success`);
+    success.parentNode.removeChild(success);
+    document.removeEventListener(`keydown`, window.preview.documentKeydownHandler);
+  };
+
+  var formSuccessHandler = function () {
+    var successTemplate = document.querySelector(`#success`)
+      .content
+      .querySelector(`.success`);
+
+    var successWindow = successTemplate.cloneNode(true);
+    main.appendChild(successWindow);
+    openSuccessWindow();
+  };
+
+  var closeErrorWindow = function () {
+    var error = document.querySelector(`.error`);
+    error.parentNode.removeChild(error);
+    document.removeEventListener(`keydown`, window.preview.documentKeydownHandler);
+  };
+
+  var errorButtonClickHandler = function () {
+    closeErrorWindow();
+  };
+
+  var errorClickHandler = function (evt) {
+    var errorInner = document.querySelector(`.error__inner`);
+    if (evt.target !== errorInner) {
+      closeErrorWindow();
+    }
+  };
+
+  var openErrorWindow = function () {
+    var errorButton = document.querySelector(`.error__button`);
+    var error = document.querySelector(`.error`);
+    errorButton.addEventListener(`click`, errorButtonClickHandler);
+    document.addEventListener(`keydown`, window.preview.documentKeydownHandler);
+    error.addEventListener(`click`, errorClickHandler);
+  };
+
+  var formErrorHandler = function () {
+    var errorTemplate = document.querySelector(`#error`)
+      .content
+      .querySelector(`.error`);
+
+    var errorWindow = errorTemplate.cloneNode(true);
+    main.appendChild(errorWindow);
+    openErrorWindow();
+  };
+
+  imgUploadForm.addEventListener(`submit`, function (evt) {
+    window.backend.saveForm(new FormData(imgUploadForm), formSuccessHandler, formErrorHandler);
+    closeImgUpload();
+    evt.preventDefault();
+  });
+
   window.form = {
     textDescription,
     textHashtags,
     closeImgUpload,
+    closeSuccessWindow,
   };
 
 })();
