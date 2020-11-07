@@ -59,22 +59,24 @@
     pictureCollection.forEach(function (item) {
       item.remove();
     });
-    window.debounce(renderAllPhotos(photos));
+    renderAllPhotos(photos);
   };
+
+  var bounceChangeSortType = window.debounce(changeTypeSort);
 
   var successHandler = function (photos) {
     imgFilters.classList.remove(`img-filters--inactive`);
-    changeTypeSort(photos);
+    bounceChangeSortType(photos);
     filterDefault.classList.add(`img-filters__button--active`);
   };
 
   var successHandlerRandom = function (photos) {
-    window.debounce(changeTypeSort(photos));
+    bounceChangeSortType(photos);
     filterRandom.classList.add(`img-filters__button--active`);
   };
 
   var successHandlerDiscussed = function (photos) {
-    changeTypeSort(photos);
+    bounceChangeSortType(photos);
     filterDiscussed.classList.add(`img-filters__button--active`);
   };
 
