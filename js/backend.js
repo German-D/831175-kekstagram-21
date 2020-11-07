@@ -11,13 +11,25 @@
     OK: 200
   };
 
-  var loadPhotos = function (onSuccess, onError) {
+  var loadPhotos = function (onSuccess, onError, type) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = `json`;
 
     xhr.addEventListener(`load`, function () {
       if (xhr.status === StatusCode.OK) {
-        onSuccess(xhr.response);
+        switch (type) {
+          case `random`:
+            var randomResponse = window.utils.shuffle(xhr.response);
+            onSuccess(randomResponse.slice(0, 10));
+            break;
+          case 'discussed':
+            var discussedResponse = xhr.response.sort(function (a, b) {
+              return b.likes - a.likes;
+            });
+            onSuccess(discussedResponse);
+            break;
+          default: onSuccess(xhr.response);
+        }
       } else {
         onError(`Статус ответа: ` + xhr.status + ` ` + xhr.statusText);
       }
