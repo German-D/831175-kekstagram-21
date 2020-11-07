@@ -4,8 +4,8 @@
   // Отрисовка фотографий
   var imgFilters = document.querySelector(`.img-filters`);
   var filterRandom = document.querySelector(`#filter-random`);
-  var filterDefault = document.querySelector('#filter-default');
-  var filterDiscussed = document.querySelector('#filter-discussed');
+  var filterDefault = document.querySelector(`#filter-default`);
+  var filterDiscussed = document.querySelector(`#filter-discussed`);
 
   var renderPhoto = function (photo, i) {
     var pictureTemplate = document.querySelector(`#picture`)
@@ -51,31 +51,31 @@
   };
 
   var changeTypeSort = function (photos) {
-    filterDefault.classList.remove('img-filters__button--active');
-    filterRandom.classList.remove('img-filters__button--active');
-    filterDiscussed.classList.remove('img-filters__button--active');
+    filterDefault.classList.remove(`img-filters__button--active`);
+    filterRandom.classList.remove(`img-filters__button--active`);
+    filterDiscussed.classList.remove(`img-filters__button--active`);
 
-    var pictureCollecton = document.querySelectorAll('.picture');
-    pictureCollecton.forEach(function (item) {
+    var pictureCollection = document.querySelectorAll(`.picture`);
+    pictureCollection.forEach(function (item) {
       item.remove();
     });
-    renderAllPhotos(photos);
+    window.debounce(renderAllPhotos(photos));
   };
 
   var successHandler = function (photos) {
     imgFilters.classList.remove(`img-filters--inactive`);
-    window.debounce(changeTypeSort(photos));
-    filterDefault.classList.add('img-filters__button--active');
+    changeTypeSort(photos);
+    filterDefault.classList.add(`img-filters__button--active`);
   };
 
   var successHandlerRandom = function (photos) {
-    window.debounce(changeTypeSort(photos));
-    filterRandom.classList.add('img-filters__button--active');
+    changeTypeSort(photos);
+    filterRandom.classList.add(`img-filters__button--active`);
   };
 
   var successHandlerDiscussed = function (photos) {
-    window.debounce(changeTypeSort(photos));
-    filterDiscussed.classList.add('img-filters__button--active');
+    changeTypeSort(photos);
+    filterDiscussed.classList.add(`img-filters__button--active`);
   };
 
   var errorHandler = function (errorMessage) {
@@ -92,20 +92,20 @@
 
   window.backend.loadPhotos(successHandler, errorHandler);
 
-  var filterDefaultClickhandler = function () {
+  var filterDefaultClickHandler = function () {
     window.backend.loadPhotos(successHandler, errorHandler);
   };
 
   var filterRandomClickHandler = function () {
-    window.backend.loadPhotos(successHandlerRandom, errorHandler, 'random');
+    window.backend.loadPhotos(successHandlerRandom, errorHandler, `random`);
   };
 
   var filterDiscussedClickHandler = function () {
-    window.backend.loadPhotos(successHandlerDiscussed, errorHandler, 'discussed');
+    window.backend.loadPhotos(successHandlerDiscussed, errorHandler, `discussed`);
   };
-  filterDefault.addEventListener('click', filterDefaultClickhandler);
+  filterDefault.addEventListener(`click`, filterDefaultClickHandler);
   filterRandom.addEventListener(`click`, filterRandomClickHandler);
-  filterDiscussed.addEventListener('click', filterDiscussedClickHandler);
+  filterDiscussed.addEventListener(`click`, filterDiscussedClickHandler);
 
   window.gallery = {
     errorHandler,

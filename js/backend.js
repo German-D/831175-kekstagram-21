@@ -24,7 +24,7 @@
             break;
           case 'discussed':
             var discussedResponse = xhr.response.sort(function (a, b) {
-              return b.likes - a.likes;
+              return b.comments.length - a.comments.length;
             });
             onSuccess(discussedResponse);
             break;
