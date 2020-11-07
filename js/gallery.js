@@ -69,7 +69,7 @@
   };
 
   var successHandlerRandom = function (photos) {
-    changeTypeSort(photos);
+    window.debounce(changeTypeSort(photos));
     filterRandom.classList.add(`img-filters__button--active`);
   };
 
