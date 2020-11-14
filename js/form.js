@@ -26,7 +26,6 @@ var closeImgUpload = function () {
   imgUploadEffectLevel.classList.add(`hidden`);
   imgUploadPreviewImg.classList = ``;
   scaleControlValue.value = `100%`;
-  // imgUploadPreviewImg.style = `transform: scale(1);`;
   imgUploadPreviewImg.style = ``;
   effectLevelValue.value = ``;
   textHashtags.value = ``;
