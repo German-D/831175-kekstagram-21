@@ -46,6 +46,23 @@ var newCommentsList = socialComments.cloneNode(false);
 var page = 0;
 var limit = 5;
 
+var renderComments = function () {
+  for (var i = page * limit; i < (page + 1) * limit && i < allCurrentComments.length; i++) {
+
+    var item = allCurrentComments[i];
+
+    var newComment = socialComment.cloneNode(true);
+    var socialPicture = newComment.querySelector(`.social__picture`);
+    var socialText = newComment.querySelector(`.social__text`);
+    socialPicture.src = item.avatar;
+    socialPicture.alt = item.name;
+    socialText.textContent = item.message;
+    newCommentsList.appendChild(newComment);
+  }
+
+  page++;
+};
+
 var openPhoto = function (currentPhoto) {
   allCurrentComments = currentPhoto.comments;
 
@@ -56,7 +73,7 @@ var openPhoto = function (currentPhoto) {
 
   page = 0;
 
-  commentsLoaderClickHandler();
+  renderComments();
   if (currentPhoto.comments.length > 5) {
     showButtonMoreComments();
   }
@@ -74,21 +91,7 @@ var openPhoto = function (currentPhoto) {
 // Добавляю новые комментарии
 
 var commentsLoaderClickHandler = function () {
-  for (var i = page * limit; i < (page + 1) * limit && i < allCurrentComments.length; i++) {
-
-    var item = allCurrentComments[i];
-
-    var newComment = socialComment.cloneNode(true);
-    var socialPicture = newComment.querySelector(`.social__picture`);
-    var socialText = newComment.querySelector(`.social__text`);
-    socialPicture.src = item.avatar;
-    socialPicture.alt = item.name;
-    socialText.textContent = item.message;
-    newCommentsList.appendChild(newComment);
-  }
-
-  page++;
-
+  renderComments();
   var socialCommentCollection = document.querySelectorAll(`.social__comment`);
   if (socialCommentCollection.length === allCurrentComments.length) {
     hideButtonMoreComments();
