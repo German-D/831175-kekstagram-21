@@ -2,6 +2,7 @@
 
 var LOAD_URL = `https://21.javascript.pages.academy/kekstagram/data`;
 var SAVE_URL = `https://21.javascript.pages.academy/kekstagram`;
+var MAX_RANDOM_COUNT = 10;
 
 var TIMEOUT_IN_MS = 10000;
 
@@ -18,7 +19,7 @@ var loadPhotos = function (onSuccess, onError, type) {
       switch (type) {
         case `random`:
           var randomResponse = window.utils.shuffle(xhr.response);
-          onSuccess(randomResponse.slice(0, 10));
+          onSuccess(randomResponse.slice(0, MAX_RANDOM_COUNT));
           break;
         case `discussed`:
           var discussedResponse = xhr.response.sort(function (a, b) {

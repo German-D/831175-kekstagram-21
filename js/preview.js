@@ -1,5 +1,6 @@
 'use strict';
-
+var PAGE = 0;
+var LIMIT = 5;
 var body = document.querySelector(`body`);
 
 // Отрисовываем большую картинку
@@ -8,7 +9,6 @@ var bigPicture = document.querySelector(`.big-picture`);
 var bigPictureCancel = bigPicture.querySelector(`.big-picture__cancel`);
 var commentsLoader = bigPicture.querySelector(`.comments-loader`);
 commentsLoader.classList.add(`hidden`);
-
 
 var bigPictureCancelClickHandler = function () {
   closeBigPhoto();
@@ -43,24 +43,22 @@ var commentsCount = bigPicture.querySelector(`.comments-count`);
 var socialComments = bigPicture.querySelector(`.social__comments`);
 var socialComment = socialComments.querySelector(`.social__comment`);
 var newCommentsList = socialComments.cloneNode(false);
-var page = 0;
-var limit = 5;
 
 var renderComments = function () {
-  for (var i = page * limit; i < (page + 1) * limit && i < allCurrentComments.length; i++) {
+  for (let i = PAGE * LIMIT; i < (PAGE + 1) * LIMIT && i < allCurrentComments.length; i++) {
 
-    var item = allCurrentComments[i];
+    let item = allCurrentComments[i];
 
-    var newComment = socialComment.cloneNode(true);
-    var socialPicture = newComment.querySelector(`.social__picture`);
-    var socialText = newComment.querySelector(`.social__text`);
+    let newComment = socialComment.cloneNode(true);
+    let socialPicture = newComment.querySelector(`.social__picture`);
+    let socialText = newComment.querySelector(`.social__text`);
     socialPicture.src = item.avatar;
     socialPicture.alt = item.name;
     socialText.textContent = item.message;
     newCommentsList.appendChild(newComment);
   }
 
-  page++;
+  PAGE++;
 };
 
 var openPhoto = function (currentPhoto) {
@@ -71,10 +69,10 @@ var openPhoto = function (currentPhoto) {
   likesCount.textContent = currentPhoto.likes;
   commentsCount.textContent = currentPhoto.comments.length;
 
-  page = 0;
+  PAGE = 0;
 
   renderComments();
-  if (currentPhoto.comments.length > 5) {
+  if (currentPhoto.comments.length > LIMIT) {
     showButtonMoreComments();
   }
 
@@ -92,7 +90,7 @@ var openPhoto = function (currentPhoto) {
 
 var commentsLoaderClickHandler = function () {
   renderComments();
-  var socialCommentCollection = document.querySelectorAll(`.social__comment`);
+  let socialCommentCollection = document.querySelectorAll(`.social__comment`);
   if (socialCommentCollection.length === allCurrentComments.length) {
     hideButtonMoreComments();
   }

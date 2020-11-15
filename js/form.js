@@ -2,7 +2,14 @@
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Обработка загрузки фото
+
+var SCALE_STEP = 25;
+var SCALE_MAX = 75;
+var SCALE_MIN = 25;
+var PHOBOS_PROPORTION = 3;
+var HEAT_PROPORTION = 3;
 var FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
+
 var imgUploadOverlay = document.querySelector(`.img-upload__overlay`);
 var imgUploadCancel = imgUploadOverlay.querySelector(`.img-upload__cancel`);
 var uploadFile = document.querySelector(`#upload-file`);
@@ -136,10 +143,10 @@ var effectLevelPinMousedownHandler = function (downEvt) {
         imgUploadPreviewImg.style = `filter: invert(${effectLevelValue.value}%)`;
         break;
       case `phobos`:
-        imgUploadPreviewImg.style = `filter: blur(${proportion * 3}px)`;
+        imgUploadPreviewImg.style = `filter: blur(${proportion * PHOBOS_PROPORTION}px)`;
         break;
       case `heat`:
-        imgUploadPreviewImg.style = `filter: brightness(${proportion * 3})`;
+        imgUploadPreviewImg.style = `filter: brightness(${proportion * HEAT_PROPORTION})`;
         break;
     }
   };
@@ -179,16 +186,16 @@ var scaleControlValue = imgUploadOverlay.querySelector(`.scale__control--value`)
 
 var scaleControlSmallerClickHandler = function () {
   var currentScale = Number(scaleControlValue.value.substring(0, scaleControlValue.value.length - 1));
-  if (currentScale >= 50) {
-    scaleControlValue.value = (currentScale - 25) + `%`;
+  if (currentScale > SCALE_MIN) {
+    scaleControlValue.value = (currentScale - SCALE_STEP) + `%`;
   }
   changeScale();
 };
 
 var scaleControlBiggerClickHandler = function () {
   var currentScale = Number(scaleControlValue.value.substring(0, scaleControlValue.value.length - 1));
-  if (currentScale <= 75) {
-    scaleControlValue.value = (currentScale + 25) + `%`;
+  if (currentScale <= SCALE_MAX) {
+    scaleControlValue.value = (currentScale + SCALE_STEP) + `%`;
   }
   changeScale();
 };
@@ -201,6 +208,13 @@ var changeScale = function () {
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Обработка отправки формы
+var successTemplate = document.querySelector(`#success`)
+  .content
+  .querySelector(`.success`);
+
+var errorTemplate = document.querySelector(`#error`)
+  .content
+  .querySelector(`.error`);
 
 var successClickHandler = function (evt) {
   var successInner = document.querySelector(`.success__inner`);
@@ -228,10 +242,6 @@ var closeSuccessWindow = function () {
 };
 
 var formSuccessHandler = function () {
-  var successTemplate = document.querySelector(`#success`)
-      .content
-      .querySelector(`.success`);
-
   var successWindow = successTemplate.cloneNode(true);
   main.appendChild(successWindow);
   openSuccessWindow();
@@ -263,10 +273,6 @@ var openErrorWindow = function () {
 };
 
 var formErrorHandler = function () {
-  var errorTemplate = document.querySelector(`#error`)
-      .content
-      .querySelector(`.error`);
-
   var errorWindow = errorTemplate.cloneNode(true);
   main.appendChild(errorWindow);
   openErrorWindow();

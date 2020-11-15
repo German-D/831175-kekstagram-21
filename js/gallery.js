@@ -6,12 +6,12 @@ var imgFilters = document.querySelector(`.img-filters`);
 var filterRandom = document.querySelector(`#filter-random`);
 var filterDefault = document.querySelector(`#filter-default`);
 var filterDiscussed = document.querySelector(`#filter-discussed`);
+var pictureTemplate = document.querySelector(`#picture`)
+  .content
+  .querySelector(`.picture`);
+var similarPhotoElement = document.querySelector(`.pictures`);
 
 var renderPhoto = function (photo, i) {
-  var pictureTemplate = document.querySelector(`#picture`)
-    .content
-    .querySelector(`.picture`);
-
   var photoElement = pictureTemplate.cloneNode(true);
   var photoUrl = photoElement.querySelector(`.picture__img`);
   var photoLikes = photoElement.querySelector(`.picture__likes`);
@@ -26,7 +26,6 @@ var renderPhoto = function (photo, i) {
 };
 
 var renderAllPhotos = function (photos) {
-  var similarPhotoElement = document.querySelector(`.pictures`);
   var fragment = document.createDocumentFragment();
 
   photos.forEach(function (item, i) {
