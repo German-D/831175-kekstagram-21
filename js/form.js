@@ -2,6 +2,7 @@
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Обработка загрузки фото
+var FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
 var imgUploadOverlay = document.querySelector(`.img-upload__overlay`);
 var imgUploadCancel = imgUploadOverlay.querySelector(`.img-upload__cancel`);
 var uploadFile = document.querySelector(`#upload-file`);
@@ -44,6 +45,7 @@ var openImgUpload = function () {
 };
 
 var uploadFileChangeHandler = function () {
+  renderNewPicture();
   openImgUpload();
 };
 
@@ -275,6 +277,28 @@ imgUploadForm.addEventListener(`submit`, function (evt) {
   closeImgUpload();
   evt.preventDefault();
 });
+
+
+/* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
+// Заменяю большую фото
+var renderNewPicture = function () {
+  var file = uploadFile.files[0];
+  var fileName = file.name.toLowerCase();
+
+  var matches = FILE_TYPES.some(function (it) {
+    return fileName.endsWith(it);
+  });
+
+  if (matches) {
+    var reader = new FileReader();
+
+    reader.addEventListener(`load`, function () {
+      imgUploadPreviewImg.src = reader.result;
+    });
+
+    reader.readAsDataURL(file);
+  }
+};
 
 window.form = {
   textDescription,
