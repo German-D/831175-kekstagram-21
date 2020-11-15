@@ -1,11 +1,11 @@
 'use strict';
 
 // Скопипастил лучшее решение для перемешивания массива со stackoverflow
-var shuffle = function (array) {
-  var list = array.slice();
-  var m = list.length;
-  var temp;
-  var j;
+const shuffle = (array) => {
+  let list = array.slice();
+  let m = list.length;
+  let temp;
+  let j;
 
   // Check if there's still elements remaining
   while (m) {

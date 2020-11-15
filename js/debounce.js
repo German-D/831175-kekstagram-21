@@ -1,9 +1,9 @@
 'use strict';
 
-var DEBOUNCE_INTERVAL = 500; // ms
+const DEBOUNCE_INTERVAL = 500; // ms
 
-window.debounce = function (cb) {
-  var lastTimeout = null;
+window.debounce = (cb) => {
+  let lastTimeout = null;
 
   return function (...parameters) {
     if (lastTimeout) {

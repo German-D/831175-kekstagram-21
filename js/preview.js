@@ -1,20 +1,20 @@
 'use strict';
-var PAGE = 0;
-var LIMIT = 5;
-var body = document.querySelector(`body`);
+
+const LIMIT = 5;
+const body = document.querySelector(`body`);
 
 // Отрисовываем большую картинку
-var socialFooterText = document.querySelector(`.social__footer-text`);
-var bigPicture = document.querySelector(`.big-picture`);
-var bigPictureCancel = bigPicture.querySelector(`.big-picture__cancel`);
-var commentsLoader = bigPicture.querySelector(`.comments-loader`);
+const socialFooterText = document.querySelector(`.social__footer-text`);
+const bigPicture = document.querySelector(`.big-picture`);
+const bigPictureCancel = bigPicture.querySelector(`.big-picture__cancel`);
+const commentsLoader = bigPicture.querySelector(`.comments-loader`);
 commentsLoader.classList.add(`hidden`);
 
-var bigPictureCancelClickHandler = function () {
+const bigPictureCancelClickHandler = () => {
   closeBigPhoto();
 };
 
-var documentKeydownHandler = function (evt) {
+const documentKeydownHandler = (evt) => {
   if (evt.key === `Escape`) {
     if (evt.target === window.form.textHashtags) {
       return;
@@ -31,37 +31,42 @@ var documentKeydownHandler = function (evt) {
     if (document.querySelector(`.success`)) {
       window.form.closeSuccessWindow();
     }
+
+    if (document.querySelector(`.error`)) {
+      window.form.closeErrorWindow();
+    }
   }
 };
 
-var allCurrentComments;
-var bigPictureImgDiv = bigPicture.querySelector(`.big-picture__img`);
-var bigPictureImg = bigPictureImgDiv.querySelector(`img`);
-var likesCount = bigPicture.querySelector(`.likes-count`);
-var socialCommentCount = bigPicture.querySelector(`.social__comment-count`);
-var commentsCount = bigPicture.querySelector(`.comments-count`);
-var socialComments = bigPicture.querySelector(`.social__comments`);
-var socialComment = socialComments.querySelector(`.social__comment`);
-var newCommentsList = socialComments.cloneNode(false);
+let allCurrentComments;
+let page = 0;
+const bigPictureImgDiv = bigPicture.querySelector(`.big-picture__img`);
+const bigPictureImg = bigPictureImgDiv.querySelector(`img`);
+const likesCount = bigPicture.querySelector(`.likes-count`);
+const socialCommentCount = bigPicture.querySelector(`.social__comment-count`);
+const commentsCount = bigPicture.querySelector(`.comments-count`);
+const socialComments = bigPicture.querySelector(`.social__comments`);
+const socialComment = socialComments.querySelector(`.social__comment`);
+const newCommentsList = socialComments.cloneNode(false);
 
-var renderComments = function () {
-  for (let i = PAGE * LIMIT; i < (PAGE + 1) * LIMIT && i < allCurrentComments.length; i++) {
+const renderComments = () => {
+  for (let i = page * LIMIT; i < (page + 1) * LIMIT && i < allCurrentComments.length; i++) {
 
-    let item = allCurrentComments[i];
+    const item = allCurrentComments[i];
 
-    let newComment = socialComment.cloneNode(true);
-    let socialPicture = newComment.querySelector(`.social__picture`);
-    let socialText = newComment.querySelector(`.social__text`);
+    const newComment = socialComment.cloneNode(true);
+    const socialPicture = newComment.querySelector(`.social__picture`);
+    const socialText = newComment.querySelector(`.social__text`);
     socialPicture.src = item.avatar;
     socialPicture.alt = item.name;
     socialText.textContent = item.message;
     newCommentsList.appendChild(newComment);
   }
 
-  PAGE++;
+  page++;
 };
 
-var openPhoto = function (currentPhoto) {
+const openPhoto = (currentPhoto) => {
   allCurrentComments = currentPhoto.comments;
 
   // Обогощаю картинку и форму данными
@@ -69,7 +74,7 @@ var openPhoto = function (currentPhoto) {
   likesCount.textContent = currentPhoto.likes;
   commentsCount.textContent = currentPhoto.comments.length;
 
-  PAGE = 0;
+  page = 0;
 
   renderComments();
   if (currentPhoto.comments.length > LIMIT) {
@@ -88,21 +93,21 @@ var openPhoto = function (currentPhoto) {
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Добавляю новые комментарии
 
-var commentsLoaderClickHandler = function () {
+const commentsLoaderClickHandler = () => {
   renderComments();
-  let socialCommentCollection = document.querySelectorAll(`.social__comment`);
+  const socialCommentCollection = document.querySelectorAll(`.social__comment`);
   if (socialCommentCollection.length === allCurrentComments.length) {
     hideButtonMoreComments();
   }
 
 };
 
-var showButtonMoreComments = function () {
+const showButtonMoreComments = () => {
   commentsLoader.classList.remove(`hidden`);
   commentsLoader.addEventListener(`click`, commentsLoaderClickHandler);
 };
 
-var hideButtonMoreComments = function () {
+const hideButtonMoreComments = () => {
   commentsLoader.classList.add(`hidden`);
   commentsLoader.removeEventListener(`click`, commentsLoaderClickHandler);
 };
@@ -110,7 +115,7 @@ var hideButtonMoreComments = function () {
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Закрываем большую картинку
 
-var closeBigPhoto = function () {
+const closeBigPhoto = () => {
   newCommentsList.innerHTML = ``;
   bigPicture.classList.add(`hidden`);
   document.removeEventListener(`keydown`, documentKeydownHandler);

@@ -1,28 +1,28 @@
 'use strict';
 
-var LOAD_URL = `https://21.javascript.pages.academy/kekstagram/data`;
-var SAVE_URL = `https://21.javascript.pages.academy/kekstagram`;
-var MAX_RANDOM_COUNT = 10;
+const LOAD_URL = `https://21.javascript.pages.academy/kekstagram/data`;
+const SAVE_URL = `https://21.javascript.pages.academy/kekstagram`;
+const MAX_RANDOM_COUNT = 10;
 
-var TIMEOUT_IN_MS = 10000;
+const TIMEOUT_IN_MS = 10000;
 
-var StatusCode = {
+const StatusCode = {
   OK: 200
 };
 
-var loadPhotos = function (onSuccess, onError, type) {
-  var xhr = new XMLHttpRequest();
+const loadPhotos = (onSuccess, onError, type) => {
+  const xhr = new XMLHttpRequest();
   xhr.responseType = `json`;
 
   xhr.addEventListener(`load`, function () {
     if (xhr.status === StatusCode.OK) {
       switch (type) {
         case `random`:
-          var randomResponse = window.utils.shuffle(xhr.response);
+          const randomResponse = window.utils.shuffle(xhr.response);
           onSuccess(randomResponse.slice(0, MAX_RANDOM_COUNT));
           break;
         case `discussed`:
-          var discussedResponse = xhr.response.sort(function (a, b) {
+          const discussedResponse = xhr.response.sort(function (a, b) {
             return b.comments.length - a.comments.length;
           });
           onSuccess(discussedResponse);
@@ -48,8 +48,8 @@ var loadPhotos = function (onSuccess, onError, type) {
   xhr.send();
 };
 
-var saveForm = function (data, onSuccess, onError) {
-  var xhr = new XMLHttpRequest();
+const saveForm = (data, onSuccess, onError) => {
+  const xhr = new XMLHttpRequest();
   xhr.responseType = `json`;
 
   xhr.addEventListener(`load`, function () {

@@ -3,22 +3,23 @@
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Обработка загрузки фото
 
-var SCALE_STEP = 25;
-var SCALE_MAX = 75;
-var SCALE_MIN = 25;
-var PHOBOS_PROPORTION = 3;
-var HEAT_PROPORTION = 3;
-var FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
+const SCALE_STEP = 25;
+const SCALE_MAX = 75;
+const SCALE_MIN = 25;
+const PHOBOS_PROPORTION = 3;
+const HEAT_PROPORTION = 3;
+const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
 
-var imgUploadOverlay = document.querySelector(`.img-upload__overlay`);
-var imgUploadCancel = imgUploadOverlay.querySelector(`.img-upload__cancel`);
-var uploadFile = document.querySelector(`#upload-file`);
-var imgUploadForm = document.querySelector(`.img-upload__form`);
-var textDescription = imgUploadOverlay.querySelector(`.text__description`);
-var textHashtags = imgUploadOverlay.querySelector(`.text__hashtags`);
-var main = document.querySelector(`main`);
+const imgUploadOverlay = document.querySelector(`.img-upload__overlay`);
+const imgUploadCancel = imgUploadOverlay.querySelector(`.img-upload__cancel`);
+const uploadFile = document.querySelector(`#upload-file`);
+const imgUploadForm = document.querySelector(`.img-upload__form`);
+const textDescription = imgUploadOverlay.querySelector(`.text__description`);
+const textHashtags = imgUploadOverlay.querySelector(`.text__hashtags`);
+const main = document.querySelector(`main`);
 
-var closeImgUpload = function () {
+const closeImgUpload = () => {
+
   imgUploadOverlay.classList.add(`hidden`);
   uploadFile.value = ``;
   uploadFile.addEventListener(`change`, uploadFileChangeHandler);
@@ -30,6 +31,7 @@ var closeImgUpload = function () {
   scaleControlSmaller.removeEventListener(`click`, scaleControlSmallerClickHandler);
 
   // Сбрасываю параметры фото при его закрытии
+  textHashtags.setCustomValidity(``);
   effectnone.checked = true;
   imgUploadEffectLevel.classList.add(`hidden`);
   imgUploadPreviewImg.classList = ``;
@@ -40,7 +42,7 @@ var closeImgUpload = function () {
   textDescription.value = ``;
 };
 
-var openImgUpload = function () {
+const openImgUpload = () => {
   imgUploadOverlay.classList.remove(`hidden`);
   window.preview.body.classList.add(`modal-open`);
   document.addEventListener(`keydown`, window.preview.documentKeydownHandler);
@@ -51,12 +53,12 @@ var openImgUpload = function () {
   uploadFile.removeEventListener(`change`, uploadFileChangeHandler);
 };
 
-var uploadFileChangeHandler = function () {
+const uploadFileChangeHandler = () => {
   renderNewPicture();
   openImgUpload();
 };
 
-var imgUploadCancelClickHandler = function () {
+const imgUploadCancelClickHandler = () => {
   closeImgUpload();
 };
 
@@ -65,22 +67,22 @@ uploadFile.addEventListener(`change`, uploadFileChangeHandler);
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Обработка ползунка
 
-var effectLevelPin = imgUploadOverlay.querySelector(`.effect-level__pin`);
-var effectLevelValue = imgUploadOverlay.querySelector(`.effect-level__value`);
-var effectLevelLine = imgUploadOverlay.querySelector(`.effect-level__line`);
-var effectLevelDepth = imgUploadOverlay.querySelector(`.effect-level__depth`);
+const effectLevelPin = imgUploadOverlay.querySelector(`.effect-level__pin`);
+const effectLevelValue = imgUploadOverlay.querySelector(`.effect-level__value`);
+const effectLevelLine = imgUploadOverlay.querySelector(`.effect-level__line`);
+const effectLevelDepth = imgUploadOverlay.querySelector(`.effect-level__depth`);
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Обработка смены фильтра
-var imgUploadPreview = imgUploadOverlay.querySelector(`.img-upload__preview`);
-var imgUploadPreviewImg = imgUploadPreview.querySelector(`img`);
-var imgUploadEffectLevel = imgUploadOverlay.querySelector(`.img-upload__effect-level`);
-var effectsList = imgUploadOverlay.querySelector(`.effects__list`);
-var effectsItems = effectsList.querySelectorAll(`.effects__item`);
-var effectnone = effectsList.querySelector(`#effect-none`);
-var newFilterValue;
+const imgUploadPreview = imgUploadOverlay.querySelector(`.img-upload__preview`);
+const imgUploadPreviewImg = imgUploadPreview.querySelector(`img`);
+const imgUploadEffectLevel = imgUploadOverlay.querySelector(`.img-upload__effect-level`);
+const effectsList = imgUploadOverlay.querySelector(`.effects__list`);
+const effectsItems = effectsList.querySelectorAll(`.effects__item`);
+const effectnone = effectsList.querySelector(`#effect-none`);
+let newFilterValue;
 
-var effectsItemChangeHandler = function (evt) {
+const effectsItemChangeHandler = (evt) => {
   imgUploadPreviewImg.classList = ``;
   imgUploadPreviewImg.style = ``;
   if (evt.target.value === `none`) {
@@ -101,24 +103,24 @@ effectsItems.forEach(function (item) {
   item.addEventListener(`change`, effectsItemChangeHandler);
 });
 
-var effectLevelPinMousedownHandler = function (downEvt) {
+const effectLevelPinMousedownHandler = (downEvt) => {
   downEvt.preventDefault();
 
-  var startCoords = {
+  const startCoords = {
     x: downEvt.clientX,
   };
 
-  var currentPosition = parseInt(effectLevelPin.style.left, 10) || 0;
-  var effectLevelLineWidth = effectLevelLine.getBoundingClientRect().width;
+  const currentPosition = parseInt(effectLevelPin.style.left, 10) || 0;
+  const effectLevelLineWidth = effectLevelLine.getBoundingClientRect().width;
 
-  var documentMouseMoveHandler = function (moveEvt) {
+  const documentMouseMoveHandler = (moveEvt) => {
     moveEvt.preventDefault();
 
-    var shift = {
+    const shift = {
       x: startCoords.x - moveEvt.clientX,
     };
 
-    var newPosition = currentPosition - shift.x;
+    let newPosition = currentPosition - shift.x;
 
     if (newPosition < 0) {
       newPosition = 0;
@@ -130,7 +132,7 @@ var effectLevelPinMousedownHandler = function (downEvt) {
     effectLevelDepth.style.width = newPosition + `px`;
 
     effectLevelValue.value = Math.round(100 * (newPosition / effectLevelLineWidth));
-    var proportion = effectLevelValue.value / 100;
+    const proportion = effectLevelValue.value / 100;
 
     switch (newFilterValue) {
       case `chrome`:
@@ -151,7 +153,7 @@ var effectLevelPinMousedownHandler = function (downEvt) {
     }
   };
 
-  var documentMouseupHandler = function (upEvt) {
+  const documentMouseupHandler = (upEvt) => {
     upEvt.preventDefault();
 
     document.removeEventListener(`mousemove`, documentMouseMoveHandler);
@@ -168,9 +170,12 @@ effectLevelPin.addEventListener(`mousedown`, effectLevelPinMousedownHandler);
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Валидация хеш-тегов и комментов
 
-var textHashtagsInputHandler = function (evt) {
-  var validationRules = /(^|\B)#(?![0-9_]+\b)([a-zA-Z0-9_]{1,20})(\b|\r)/gi;
-  if (validationRules.test(evt.target.value)) {
+const textHashtagsInputHandler = (evt) => {
+  const validationRules = /(^|\B)#(?![0-9_]+\b)([a-zA-Z0-9_]{1,20})(\b|\r)/gi;
+  const hashtags = evt.target.value.match(validationRules) || [];
+  const hasDuplicates = new Set(hashtags).size !== hashtags.length;
+
+  if (validationRules.test(evt.target.value) && hashtags.length <= 5 && !hasDuplicates) {
     textHashtags.setCustomValidity(``);
   } else {
     textHashtags.setCustomValidity(`Такой хэштег невозможен`);
@@ -180,100 +185,111 @@ textHashtags.addEventListener(`input`, textHashtagsInputHandler);
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Масштабирование
-var scaleControlSmaller = imgUploadOverlay.querySelector(`.scale__control--smaller`);
-var scaleControlBigger = imgUploadOverlay.querySelector(`.scale__control--bigger`);
-var scaleControlValue = imgUploadOverlay.querySelector(`.scale__control--value`);
+const scaleControlSmaller = imgUploadOverlay.querySelector(`.scale__control--smaller`);
+const scaleControlBigger = imgUploadOverlay.querySelector(`.scale__control--bigger`);
+const scaleControlValue = imgUploadOverlay.querySelector(`.scale__control--value`);
 
-var scaleControlSmallerClickHandler = function () {
-  var currentScale = Number(scaleControlValue.value.substring(0, scaleControlValue.value.length - 1));
+const scaleControlSmallerClickHandler = () => {
+  const currentScale = Number(scaleControlValue.value.substring(0, scaleControlValue.value.length - 1));
   if (currentScale > SCALE_MIN) {
     scaleControlValue.value = (currentScale - SCALE_STEP) + `%`;
   }
   changeScale();
 };
 
-var scaleControlBiggerClickHandler = function () {
-  var currentScale = Number(scaleControlValue.value.substring(0, scaleControlValue.value.length - 1));
+const scaleControlBiggerClickHandler = () => {
+  const currentScale = Number(scaleControlValue.value.substring(0, scaleControlValue.value.length - 1));
   if (currentScale <= SCALE_MAX) {
     scaleControlValue.value = (currentScale + SCALE_STEP) + `%`;
   }
   changeScale();
 };
 
-var changeScale = function () {
-  var currentScale = Number(scaleControlValue.value.substring(0, scaleControlValue.value.length - 1));
-  var scaleProportion = currentScale / 100;
+const changeScale = () => {
+  const currentScale = Number(scaleControlValue.value.substring(0, scaleControlValue.value.length - 1));
+  const scaleProportion = currentScale / 100;
   imgUploadPreviewImg.style = `transform: scale(${scaleProportion});`;
 };
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Обработка отправки формы
-var successTemplate = document.querySelector(`#success`)
+const successTemplate = document.querySelector(`#success`)
   .content
   .querySelector(`.success`);
 
-var errorTemplate = document.querySelector(`#error`)
+const errorTemplate = document.querySelector(`#error`)
   .content
   .querySelector(`.error`);
 
-var successClickHandler = function (evt) {
-  var successInner = document.querySelector(`.success__inner`);
-  if (evt.target !== successInner) {
-    closeSuccessWindow();
-  }
-};
-
-var openSuccessWindow = function () {
-  var success = document.querySelector(`.success`);
-  var successButton = document.querySelector(`.success__button`);
+const openSuccessWindow = () => {
+  const success = document.querySelector(`.success`);
+  const successButton = document.querySelector(`.success__button`);
   successButton.addEventListener(`click`, successButtonClickHandler);
-  document.addEventListener(`keydown`, window.preview.documentKeydownHandler);
   success.addEventListener(`click`, successClickHandler);
+  document.addEventListener(`keydown`, window.preview.documentKeydownHandler);
 };
 
-var successButtonClickHandler = function () {
+const successButtonClickHandler = () => {
   closeSuccessWindow();
 };
 
-var closeSuccessWindow = function () {
-  var success = document.querySelector(`.success`);
+const successClickHandler = (evt) => {
+  const successInner = document.querySelector(`.success__inner`);
+  const successButton = document.querySelector(`.success__button`);
+  if (successInner) {
+    if (evt.target !== successInner && evt.target !== successButton) {
+      closeSuccessWindow();
+    }
+  }
+};
+
+const closeSuccessWindow = () => {
+  const success = document.querySelector(`.success`);
+  const successButton = document.querySelector(`.success__button`);
   success.parentNode.removeChild(success);
+  successButton.removeEventListener(`click`, successButtonClickHandler);
   document.removeEventListener(`keydown`, window.preview.documentKeydownHandler);
 };
 
-var formSuccessHandler = function () {
-  var successWindow = successTemplate.cloneNode(true);
+const formSuccessHandler = () => {
+  const successWindow = successTemplate.cloneNode(true);
   main.appendChild(successWindow);
   openSuccessWindow();
 };
 
-var closeErrorWindow = function () {
-  var error = document.querySelector(`.error`);
+const closeErrorWindow = () => {
+  const error = document.querySelector(`.error`);
+  const errorButton = document.querySelector(`.error__button`);
   error.parentNode.removeChild(error);
+  errorButton.removeEventListener(`click`, errorButtonClickHandler);
+  error.removeEventListener(`click`, errorClickHandler);
   document.removeEventListener(`keydown`, window.preview.documentKeydownHandler);
 };
 
-var errorButtonClickHandler = function () {
+const errorButtonClickHandler = () => {
   closeErrorWindow();
 };
 
-var errorClickHandler = function (evt) {
-  var errorInner = document.querySelector(`.error__inner`);
-  if (evt.target !== errorInner) {
-    closeErrorWindow();
+const errorClickHandler = (evt) => {
+  const errorInner = document.querySelector(`.error__inner`);
+  const errorButton = document.querySelector(`.error__button`);
+  if (errorInner) {
+    if (evt.target !== errorInner && evt.target !== errorButton) {
+      closeErrorWindow();
+    }
   }
 };
 
-var openErrorWindow = function () {
-  var errorButton = document.querySelector(`.error__button`);
-  var error = document.querySelector(`.error`);
+const openErrorWindow = () => {
+  const errorButton = document.querySelector(`.error__button`);
+  const error = document.querySelector(`.error`);
   errorButton.addEventListener(`click`, errorButtonClickHandler);
   document.addEventListener(`keydown`, window.preview.documentKeydownHandler);
   error.addEventListener(`click`, errorClickHandler);
 };
 
-var formErrorHandler = function () {
-  var errorWindow = errorTemplate.cloneNode(true);
+const formErrorHandler = () => {
+  const errorWindow = errorTemplate.cloneNode(true);
   main.appendChild(errorWindow);
   openErrorWindow();
 };
@@ -287,16 +303,16 @@ imgUploadForm.addEventListener(`submit`, function (evt) {
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Заменяю большую фото
-var renderNewPicture = function () {
-  var file = uploadFile.files[0];
-  var fileName = file.name.toLowerCase();
+const renderNewPicture = () => {
+  const file = uploadFile.files[0];
+  const fileName = file.name.toLowerCase();
 
-  var matches = FILE_TYPES.some(function (it) {
+  const matches = FILE_TYPES.some(function (it) {
     return fileName.endsWith(it);
   });
 
   if (matches) {
-    var reader = new FileReader();
+    const reader = new FileReader();
 
     reader.addEventListener(`load`, function () {
       imgUploadPreviewImg.src = reader.result;
@@ -311,4 +327,5 @@ window.form = {
   textHashtags,
   closeImgUpload,
   closeSuccessWindow,
+  closeErrorWindow,
 };

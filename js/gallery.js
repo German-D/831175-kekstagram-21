@@ -2,20 +2,20 @@
 
 /* ++++++++++ ++++++++++ ++++++++++ ++++++++++ ++++++++++++++++++++ ++++++++++ */
 // Отрисовка фотографий
-var imgFilters = document.querySelector(`.img-filters`);
-var filterRandom = document.querySelector(`#filter-random`);
-var filterDefault = document.querySelector(`#filter-default`);
-var filterDiscussed = document.querySelector(`#filter-discussed`);
-var pictureTemplate = document.querySelector(`#picture`)
+const imgFilters = document.querySelector(`.img-filters`);
+const filterRandom = document.querySelector(`#filter-random`);
+const filterDefault = document.querySelector(`#filter-default`);
+const filterDiscussed = document.querySelector(`#filter-discussed`);
+const pictureTemplate = document.querySelector(`#picture`)
   .content
   .querySelector(`.picture`);
-var similarPhotoElement = document.querySelector(`.pictures`);
+const similarPhotoElement = document.querySelector(`.pictures`);
 
-var renderPhoto = function (photo, i) {
-  var photoElement = pictureTemplate.cloneNode(true);
-  var photoUrl = photoElement.querySelector(`.picture__img`);
-  var photoLikes = photoElement.querySelector(`.picture__likes`);
-  var photoComments = photoElement.querySelector(`.picture__comments`);
+const renderPhoto = (photo, i) => {
+  const photoElement = pictureTemplate.cloneNode(true);
+  const photoUrl = photoElement.querySelector(`.picture__img`);
+  const photoLikes = photoElement.querySelector(`.picture__likes`);
+  const photoComments = photoElement.querySelector(`.picture__comments`);
 
   photoUrl.setAttribute(`data-index`, i);
   photoUrl.src = photo.url;
@@ -25,20 +25,20 @@ var renderPhoto = function (photo, i) {
   return photoElement;
 };
 
-var renderAllPhotos = function (photos) {
-  var fragment = document.createDocumentFragment();
+const renderAllPhotos = (photos) => {
+  const fragment = document.createDocumentFragment();
 
   photos.forEach(function (item, i) {
-    var newPhoto = renderPhoto(photos[i], i);
+    const newPhoto = renderPhoto(photos[i], i);
     fragment.appendChild(newPhoto);
   });
 
   similarPhotoElement.appendChild(fragment);
 
   // Сразу добавляю обработчик на клик для каждой картинки
-  var photosCollection = document.querySelectorAll(`.picture`);
+  const photosCollection = document.querySelectorAll(`.picture`);
 
-  var photosListClickHandler = function (i) {
+  const photosListClickHandler = (i) => {
     window.preview.openPhoto(photos[i]);
   };
 
@@ -49,38 +49,38 @@ var renderAllPhotos = function (photos) {
   });
 };
 
-var changeTypeSort = function (photos) {
+const changeTypeSort = (photos) => {
   filterDefault.classList.remove(`img-filters__button--active`);
   filterRandom.classList.remove(`img-filters__button--active`);
   filterDiscussed.classList.remove(`img-filters__button--active`);
 
-  var pictureCollection = document.querySelectorAll(`.picture`);
+  const pictureCollection = document.querySelectorAll(`.picture`);
   pictureCollection.forEach(function (item) {
     item.remove();
   });
   renderAllPhotos(photos);
 };
 
-var bounceChangeSortType = window.debounce(changeTypeSort);
+const bounceChangeSortType = window.debounce(changeTypeSort);
 
-var successHandler = function (photos) {
+const successHandler = (photos) => {
   imgFilters.classList.remove(`img-filters--inactive`);
   bounceChangeSortType(photos);
   filterDefault.classList.add(`img-filters__button--active`);
 };
 
-var successHandlerRandom = function (photos) {
+const successHandlerRandom = (photos) => {
   bounceChangeSortType(photos);
   filterRandom.classList.add(`img-filters__button--active`);
 };
 
-var successHandlerDiscussed = function (photos) {
+const successHandlerDiscussed = (photos) => {
   bounceChangeSortType(photos);
   filterDiscussed.classList.add(`img-filters__button--active`);
 };
 
-var errorHandler = function (errorMessage) {
-  var node = document.createElement(`div`);
+const errorHandler = (errorMessage) => {
+  const node = document.createElement(`div`);
   node.style = `z-index: 100; margin: 0 auto; text-align: center; background-color: red;`;
   node.style.position = `absolute`;
   node.style.left = 0;
@@ -93,15 +93,15 @@ var errorHandler = function (errorMessage) {
 
 window.backend.loadPhotos(successHandler, errorHandler);
 
-var filterDefaultClickHandler = function () {
+const filterDefaultClickHandler = () => {
   window.backend.loadPhotos(successHandler, errorHandler);
 };
 
-var filterRandomClickHandler = function () {
+const filterRandomClickHandler = () => {
   window.backend.loadPhotos(successHandlerRandom, errorHandler, `random`);
 };
 
-var filterDiscussedClickHandler = function () {
+const filterDiscussedClickHandler = () => {
   window.backend.loadPhotos(successHandlerDiscussed, errorHandler, `discussed`);
 };
 filterDefault.addEventListener(`click`, filterDefaultClickHandler);
